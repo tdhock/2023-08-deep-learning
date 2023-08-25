@@ -1,0 +1,70 @@
+Convolutional versus fully connected networks
+
+In previous projects we have used fully connected neural networks. In
+this project the goal is to additionally fit a convolutional neural
+network, and compare the prediction accuracy of at least two
+architectures.
+
+** Class: ConvolutionalMLP
+
+This class should define a learner with fit and predict methods,
+similar to what we have been doing in previous weeks, but with a
+convolutional network. 
+
+** Plotting loss vs number of epochs
+
+- Load the zip data sets as usual from CSV.
+- Create a data_dict variable which defines two different binary
+  classification data sets: 0 vs 1, and 7 vs 1. In both cases your
+  labels should be 0 (is not one) and 1 (is one).
+- No need to scale each input matrix, because values are already in
+  [-1,1].
+- Make a two-panel plot (one panel for 0/1, one for 7/1) which shows
+  loss as a function of epochs. Use a different color for each set,
+  e.g. subtrain=red, validation=blue. Draw a point to emphasize the
+  minimum of the validation loss curve. Which number of epochs
+  resulted in the best validation loss for your convolutional
+  networks?
+- Your plots should show the characteristic U shape of the validation
+  loss curve, and monotonic subtrain loss curve.
+
+** Test error experiment
+
+- Use similar experimental setup as previous homeworks
+  (with 3-fold CV train/test splits defined by KFold, and with
+  GridSearchCV+KNeighborsClassifier and LogisticRegressionCV), but add
+  your new algorithm to compare.
+- Make sure to run experiments on both versions of the zip data. Show
+  a table of resulting test accuracy numbers, as well as a ggplot. On
+  the ggplot y axis there should be at least the following algorithms:
+  - featureless, 
+  - GridSearchCV+KNeighborsClassifier,
+  - LogisticRegressionCV, 
+  - ConvoluionalMLP
+- For ConvolutionalMLP use the same model architecture as in the
+  [[https://tensorflow.rstudio.com/guide/keras/examples/mnist_cnn/][mnist_cnn keras R example]]:
+  - input shape 16x16. 
+  - [[https://pytorch.org/docs/stable/generated/torch.nn.Conv2d.html][Conv2d]] layer with 3x3 kernel size and 32 filters.
+  - Conv2d layer with 3x3 kernel and 64 filters. 
+  - torch.flatten(start_dim=1) to convert each image matrix to a vector.
+  - Linear layer with 128 outputs.
+  - Linear layer with 1 output.
+  - max pooling / dropout layers can be included or ignored (include a
+    comparison with and without for extra credit).
+  - make sure to include a ReLU activation after each layer except the
+    last.
+  - How many hidden units are there in each layer? How many total
+    parameters to learn in the neural network?
+- dense: fully connected (256,TODO,TODO,128,1) network. First fill in
+  the TODOs by choosing numbers which result in the same/similar
+  number of parameters to learn as in the convolutional network. Note
+  that there are fewer hidden units for the same number of parameters.
+- Does your implementation get similar test accuracy as scikit-learn,
+  and the dense/fully connected network?  (it should!)
+
+** Extra credit
+
+- 10 points if your test error/accuracy figure includes an additional
+  model using dropout/max pooling layers. Do these techniques increase
+  prediction accuracy?
+

@@ -1,0 +1,216 @@
+Neural networks for regression
+
+Like last week, the goal is to implement a stochastic gradient descent
+algorithm for a neural network. So far in class we have focused on
+binary classification, which is when the label is either 1 or 0
+(positive or negative, spam or not, etc), by using the logistic loss
+(sometimes class binary cross-entropy loss). This week we will
+implement learning algorithms for regression.
+
+The only difference from your week 6 neural network code is:
+- use the square loss, [[https://pytorch.org/docs/stable/generated/torch.nn.MSELoss.html#torch.nn.MSELoss][torch.nn.MSELoss]], instead of the logistic loss
+  (BCEWithLogitsLoss).
+- use regression data sets (output is a real number) instead of
+  classification data sets (output is an integer, either 0 or 1).
+
+** Class: TorchModel
+
+This can be the exact same code as your week 6 neural network for
+binary classification.
+
+- This class implements a predictive model using the torch framework.
+- similar to https://pytorch.org/tutorials/beginner/basics/quickstart_tutorial.html#creating-models
+- Inherits from torch.nn.Module.
+- Defines an __init__ method which inputs units_per_layer (list of
+  integers).
+- Defines forward method which takes an input matrix (nrow=number of
+  observations, ncol=number of features) and returns a vector with the
+  outputs/predicted scores from the neural network.
+
+** Class: TorchLearner
+
+This class should be very similar to your week 6 code, but with one
+key difference: use the square loss (for regression) instead of the
+logistic loss (BCEWithLogits, for binary classification).
+
+This class implements fit/predict methods for weight matrix parameter
+learning and making predictions with the previous class. It should be
+similar to what we did last week, except that you should use torch
+instead of your own implementation of gradients.
+
+- __init__ method should store hyper-parameters, max_epochs,
+  batch_size, step_size, and units_per_layer (list or numpy array of
+  positive integers, first element should equal number of input
+  features, last element should be 1). Also instantiate a
+  TorchModel() and save as an attribute of this instance,
+  self.model. Also instantiate torch.optim.SGD and save as
+  self.optimizer, and instantiate torch.nn.MSELoss and save
+  as self.loss_fun.
+- take_step(X=batch_features, y=batch_labels) method should
+  - begin by computing self.model(X) and saving as vector of
+    predictions for this batch.
+  - Use self.loss_fun to compute the mean loss.
+  - Use optimizer.zero_grad, loss.backward, optimizer.step to compute
+    gradients and take a step as in
+    https://pytorch.org/tutorials/beginner/basics/quickstart_tutorial.html#optimizing-the-model-parameters
+- fit(X=subtrain_features, y=subtrain_labels) method should run
+  gradient descent until max_epochs is reached. There should be two
+  for loops, first over epochs, then over batches. You should use the
+  take_step method on each batch. Compute and store the
+  subtrain/validation loss at the end of each epoch.
+- predict(X=test_features) method should return a tensor/array of
+  predicted values (real numbers) given the current weights in the
+  neural network. (no need to implement decision_function method)
+
+** Class: TorchLearnerCV
+
+This class should be very similar to your week 6 code, and should
+implement hyper-parameter learning (select the number of epochs which
+minimizes loss on validation set, use square loss instead of
+logistic loss).
+
+This class should have a fit method that splits train into subtrain
+and validation sets, then instantiates TorchLearner and calls its fit
+method to run gradient descent, computing loss with respect to both
+sets at the end of each epoch.  After learning the best number of
+epochs using the validation set, you should re-run gradient descent on
+the entire train set using that number of epochs.
+
+** Hyper-parameter training and diagnostic plot
+
+Plot the subtrain/validation loss values as a function of the number
+of epochs.
+- You should use two different models (each with a different value of
+  units_per_layer), first with a linear model (no hidden layers), and
+  second with a "deep" neural network (with at least two hidden
+  layers).
+- Run it on the full data sets, and make a plot for each data set and
+  model, of subtrain/validation loss as a function of number of
+  epochs.
+- For full credit your subtrain loss should almost always decrease,
+  and your validation loss should show the expected U shape (if it
+  does not, then you may need to change hyper-parameters).
+- In each plot, what is the best number of epochs?
+
+** Experiments/application
+
+Use similar experimental setup as previous homeworks (with 3-fold CV
+train/test splits defined by KFold), with these differences:
+- use [[https://archive.ics.uci.edu/ml/datasets/Forest+Fires][Forest Fires]] and [[https://archive.ics.uci.edu/ml/datasets/Airfoil+Self-Noise][Airfoil Self-Noise]] data sets from the UCI ML
+  Repository, [[file:~/teaching/cs499-599-fall-2022/data/][local copies in data folder]]. In both data sets, the
+  label/output to predict is in the last column.
+- compute and plot test square loss, instead of test accuracy.
+- for the featureless baseline, for every test observation, you should
+  predict the mean of train label values (instead of the most frequent
+  train label value).
+- for the nearest neighbors baseline, use [[https://scikit-learn.org/stable/modules/neighbors.html#regression][KNeighborsRegressor]]
+  (+GridSearchCV) instead of KNeighborsClassifier.
+- for the linear model baseline, use [[https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LassoCV.html?highlight=lassocv#sklearn.linear_model.LassoCV][LassoCV]] instead of
+  LogisticRegressionCV.
+- previously you made a figure with test accuracy values for binary
+  classification, but for regression your figure should show test
+  square loss values, for at least the following algorithms:
+  feautureless, KNeighborsRegressor+GridSearchCV, LassoCV,
+  TorchLearnerCV_linear, TorchLearnerCV_deep.
+- Make sure to scale the labels as well as the features! (subtract
+  away mean, divide by sd) If the labels are too large than the loss
+  will be too large and the gradients will not be helpful for learning
+  (we call this numerical instability).
+
+Like with previous homeworks,
+- Make sure to scale the data before putting them into the data_dict
+  and before any splitting (both data sets).
+- Does your implementation get similar test accuracy as scikit-learn,
+  or better?  (it should!)
+
+** Code skeleton
+
+#+begin_src python
+  class TorchModel:
+      """same as week 6"""
+      def __init__(self, *units_per_layer):
+	  """make a torch.nn.Sequential"""
+      def forward(self, feature_tensor):
+	  """compute predictions"""
+  class TorchLearner:
+      def __init__(self, max_epochs, batch_size, step_size, units_per_layer):
+	  """Store hyper-parameters, TorchModel instance, loss, etc."""
+      def take_step(self, X, y):
+	  """compute predictions, loss, gradients, take one step"""
+      def fit(self, X, y):
+	  """Gradient descent learning of weights"""
+	  dl = torch.utils.data.DataLoader(TODO)
+	  loss_df_list = []
+	  for epoch in range(self.max_epochs):
+	      for batch_features, batch_labels in dl:
+		  self.take_step(batch_features, batch_labels)
+	      loss_df_list.append(
+		  TODO)#subtrain/validation loss using current weights.
+	  self.loss_df = pd.concat(loss_df_list)
+      def predict(self, X):
+	  """Return numpy vector of predictions"""
+  class TorchLearnerCV:
+      def __init__(self, max_epochs, batch_size, step_size, units_per_layer):
+	  self.subtrain_learner = TorchLearner(TODO)
+      def fit(self, X, y):
+	  """cross-validation for selecting the best number of epochs"""
+	  self.subtrain_learner.validation_data = TODO
+	  self.subtrain_learner.fit(TODO_SUBTRAIN_DATA)
+	  self.train_learner = TorchLearner(max_epochs = best_epochs)
+	  self.train_learner.fit(TODO_TRAIN_DATA)
+	def predict(self, X):
+	    self.train_learner.predict(X)
+  data_dict = {
+      "forest_fires":(SCALED_FEATURES, SCALED_LABELS),
+      "airfoil_self_noise":(SCALED_FEATURES, SCALED_LABELS)}
+  test_error_df_list = []
+  for data_name, TODO in data_dict.items():
+      model_units = {
+	  "linear":(ncol, 1),
+	  "deep":(ncol, 100, 10, 1)
+	  }
+      for test_fold, indices in enumerate(kf.split(TODO)):
+	  for model_name, units_per_layer in model_units.items():
+	      "fit(train data), then predict(test data), then store test error"
+	      test_error_df_list.append(test_row)
+  test_error_df = pd.concat(test_error_df_list)
+  p9.ggplot()+TODO
+#+end_src
+
+** Extra credit
+
+- Implement learning an intercept for every hidden/output unit, as an
+  instantiation parameter in TorchModel(intercept=True). Show both
+  intercept=True and False on your test accuracy plot: which is more
+  accurate, or are they about the same? (it should be about the same,
+  maybe a little more accurate with intercept)
+- Adapt your week 7 home-made Auto-grad classes to implement deep and
+  linear learners (you will have to implement a new Operation
+  sub-class for the square loss). Show these on your test error plot
+  --- do they have similar test error rates as the corresponding torch
+  learners?
+- Compare predicting log-transformed outputs in forestfires data, to
+  not using log transform, what is more accurate?
+- Compare one hot encoding to numeric encoding of month,day columns in
+  forestfires data. Also compare ignore these columns, and use both
+  kinds of encodings. Which of the four methods is more accurate? (+10
+  for each additional method you compare with on the test error plot)
+- Make a plot of test r-squared (coefficient of determination between
+  prediction vector and label vector -- this is a common measure of
+  accuracy for regression problems, and maximizing it is equivalent to
+  minimizing MSE), in addition to a plot of mean squared test error.
+  
+** FAQ
+
+- How to debug? For debugging you may want to set units_per_layer =
+  [n_input_features, 1] which means you will get a linear model and
+  batch_size=n_rows (same as linear model homework).
+- How to make sure hyper-parameters are correctly chosen? You need to
+  experiment with hyper-parameters until you find some combination
+  (max_epochs, batch_size, step_size, units_per_layer) which results
+  in the characteristic loss curves (subtrain almost always
+  decreasing, validation U shaped as number of epochs increases).
+- Why is my subtrain loss going down but my validation loss is going
+  up right away in the first iteration of gradient descent? Maybe the
+  gradients are not informative, because the loss is too large. Did
+  you scale your outputs/labels? (subtract away mean, divide by sd)

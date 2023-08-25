@@ -1,0 +1,372 @@
+---
+title: "Nearest neighbors algorithm"
+author: "Toby Dylan Hocking"
+output: beamer_presentation
+---
+
+```{r opts, echo=FALSE}
+knitr::opts_chunk$set(
+  echo=FALSE, results=FALSE,
+  fig.width=10,
+  fig.height=6)
+Sys.setenv(RETICULATE_PYTHON=if(.Platform$OS.type=="unix")
+  "/home/tdhock/.local/share/r-miniconda/envs/cs570s22/bin/python"
+  else "~/Miniconda3/envs/cs570s22/python.exe")
+reticulate::use_condaenv("cs570s22", required=TRUE)
+in_render <- !is.null(knitr::opts_knit$get('rmarkdown.pandoc.to'))
+```
+
+# Supervised machine learning
+
+- Goal is to learn a function $f(\mathbf x)=y$ where $\mathbf
+  x$ is an
+  input/feature vector and $y$ is an output/label.
+- $x=$image of digit/clothing, $y\in\{0,\dots,9\}$ (ten classes).
+- $x=$vector of word counts in email, $y\in\{1,0\}$ (spam or not).
+- Last week we studied two simple machine learning algorithms: nearest
+  neighbors and linear models.
+- This week we will study nearest neighbors in depth: distance
+  computations, feature scaling, sensitivity to irrelevant features.
+  
+---
+
+# Mixture data table
+
+```{python results=TRUE}
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import KFold
+import plotnine as p9
+import numpy as np
+import pandas as pd
+import os
+# grid/contouring functions
+def make_grid(mat, n_grid = 80):
+    nrow, ncol = mat.shape
+    assert ncol == 2
+    mesh_args = mat.apply(
+        lambda x: np.linspace(min(x),max(x), n_grid), axis=0)
+    mesh_tup = np.meshgrid(*[mesh_args[x] for x in mesh_args])
+    mesh_vectors = [v.flatten() for v in mesh_tup]
+    return pd.DataFrame(dict(zip(mesh_args,mesh_vectors)))
+# https://scikit-image.org/docs/dev/api/skimage.measure.html#skimage.measure.find_contours
+# https://scikit-image.org/docs/dev/auto_examples/edges/plot_contours.html#sphx-glr-auto-examples-edges-plot-contours-py
+def contour_paths(three_cols, level):
+    from skimage import measure
+    uniq_df = three_cols.iloc[:,:2].apply(pd.unique)
+    n_grid = uniq_df.shape[0]
+    fun_mat = three_cols.iloc[:,2].to_numpy().reshape(
+        [n_grid,n_grid]).transpose()
+    contours = measure.find_contours(fun_mat, level)
+    contour_df_list = []
+    half_df = (uniq_df-uniq_df.diff()/2)[1:]
+    half_df.index = [x-0.5 for x in half_df.index]
+    lookup_df = pd.concat([uniq_df, half_df])
+    for contour_i, contour_mat in enumerate(contours):
+        one_contour_df = pd.DataFrame(contour_mat)
+        one_contour_df.columns = [c+"_i" for c in uniq_df]
+        one_contour_df["contour_i"] = contour_i
+        for cname in lookup_df:
+            iname = cname+"_i"
+            contour_col = one_contour_df[iname]
+            lookup_col = lookup_df[cname]
+            index_df = lookup_col[contour_col].reset_index()
+            one_contour_df[cname] = index_df[cname]
+        contour_df_list.append(one_contour_df)
+    return pd.concat(contour_df_list)
+
+# work-around for rendering plots under windows, which hangs within
+# emacs python shell: instead write a PNG file and view in browser.
+import webbrowser
+on_windows = os.name == "nt"
+in_render = r.in_render if 'r' in dir() else False
+using_agg = on_windows and not in_render
+if using_agg:
+    import matplotlib
+    matplotlib.use("agg")
+def show(g):
+    if not using_agg:
+        return g
+    g.save("tmp.png")
+    webbrowser.open('tmp.png')
+
+data_dict = {}
+
+spam_df = pd.read_csv(
+    "~/teaching/cs570-spring-2022/data/spam.data",
+    header=None, sep=" ")
+nrow, ncol = spam_df.shape
+label_col_num = ncol-1
+col_num_vec = spam_df.columns.to_numpy()
+label_vec = spam_df[label_col_num]
+feature_mat = spam_df.iloc[:,col_num_vec != label_col_num]
+feature_mat.columns = [f"word{col_num}" for col_num in feature_mat]
+data_dict["spam"] = (feature_mat, label_vec)
+
+zip_df = pd.read_csv(
+    "~/teaching/cs570-spring-2022/data/zip.test.gz",
+    sep=" ", header=None)
+label_col_num = 0
+col_num_vec = zip_df.columns.to_numpy()
+all_label_vec = zip_df[label_col_num]
+is01 = all_label_vec.isin([0,1])
+label_vec = all_label_vec[is01]
+feature_mat = zip_df.loc[is01,col_num_vec != label_col_num]
+data_dict["zip"] = (feature_mat, label_vec)
+
+mixture_df = pd.read_csv(
+    "~/teaching/cs570-spring-2022/data/ESL.mixture.csv")
+#mixture_df.query('party == "democratic" & height_in > 70')
+label_col_name = "party"
+col_name_vec = mixture_df.columns.to_numpy()
+party_vec = mixture_df[label_col_name]
+party_tuples = [
+    ("democratic","blue",0),
+    ("republican","red",1)
+]
+party_colors = {party:color for party,color,number in party_tuples}
+party_number_dict = {party:number for party,color,number in party_tuples}
+number_party_dict = {number:party for party,color,number in party_tuples}
+def number_to_party_vec(v):
+    return np.where(v==0, number_party_dict[0], number_party_dict[1])
+label_vec = np.where(
+    party_vec == "democratic",
+    party_number_dict["democratic"],
+    party_number_dict["republican"])
+feature_mat = mixture_df.loc[:,col_name_vec != label_col_name]
+data_dict["mixture"] = (feature_mat, label_vec)
+pd.set_option("display.max_columns", 0)
+mixture_df
+```
+
+---
+
+# Visualize predictions of 1-nearest neighbor algorithm
+
+```{python}
+mix_features, mix_labels = data_dict["mixture"]
+grid_df = make_grid(mix_features)
+#https://stackoverflow.com/questions/55496700/starred-expression-inside-square-brackets does not work?
+#np.ogrid[-1:1:5j, -2:3:0.5]
+#slice_vec = feature_mat.apply(lambda x: slice(min(x),max(x), complex(imag=n_grid)), axis=0)
+grid_mat = grid_df.to_numpy()
+neigh = KNeighborsClassifier(n_neighbors=1).fit(mix_features, mix_labels)
+grid_df["prediction"] = neigh.predict(grid_mat)
+grid_df["party"] = number_to_party_vec(grid_df.prediction)
+gg = p9.ggplot()+\
+    p9.theme_bw()+\
+    p9.theme(subplots_adjust={'right': 0.8})+\
+    p9.geom_point(
+        p9.aes(
+            x="height_in",
+            y="weight_lb",
+            color="party"
+        ),
+        size=0.1,
+        data=grid_df)+\
+    p9.geom_point(
+        p9.aes(
+            x="height_in",
+            y="weight_lb",
+            fill="party"
+        ),
+        color="black",
+        size=2,
+        data=mixture_df)+\
+    p9.scale_color_manual(
+        values=party_colors)+\
+    p9.scale_fill_manual(
+        values=party_colors)
+show(gg)
+
+```
+
+---
+
+# Change units of weight to milli-pounds
+
+```{python results=TRUE}
+new_features = pd.DataFrame({
+    "height_in":mix_features.height_in,
+    "weight_m_lb":mix_features.weight_lb*1000
+})
+new_grid_df = make_grid(new_features)
+neigh = KNeighborsClassifier(n_neighbors=1).fit(new_features, mix_labels)
+new_grid_df["prediction"] = neigh.predict(new_grid_df)
+new_grid_df["party"] = number_to_party_vec(new_grid_df.prediction)
+new_mix_df = pd.concat([new_features, mixture_df.party], axis=1)
+pd.set_option("display.max_columns", 0)
+new_mix_df
+```
+
+---
+
+# 1 nearest neighbor in transformed space ignores height
+
+```{python}
+gg = p9.ggplot()+\
+    p9.theme_bw()+\
+    p9.theme(subplots_adjust={'right': 0.8})+\
+    p9.geom_point(
+        p9.aes(
+            x="height_in",
+            y="weight_m_lb",
+            color="party"
+        ),
+        size=0.1,
+        data=new_grid_df)+\
+    p9.geom_point(
+        p9.aes(
+            x="height_in",
+            y="weight_m_lb",
+            fill="party"
+        ),
+        color="black",
+        size=2,
+        data=new_mix_df)+\
+    p9.scale_color_manual(
+        values=party_colors)+\
+    p9.scale_fill_manual(
+        values=party_colors)
+show(gg)
+
+```
+
+# spam data
+
+```{python results=TRUE}
+pd.set_option("display.max_columns", 6)
+spam_df
+```
+
+---
+
+# Two columns from spam data have different scales
+
+```{python}
+spam_features, spam_labels = data_dict["spam"]
+range_dict = {}
+for stat in "mean", "var", :
+    stat_vec = getattr(spam_features, stat)()
+    range_dict[stat] = {}
+    for m in "min", "max":
+        method = "idx" + m
+        range_dict[stat][m] = getattr(stat_vec, method)()
+some_spam = pd.DataFrame(spam_features.loc[:,["word46","word56"]])
+some_spam["label"] = np.where(spam_labels==1, "spam", "not")
+gg = p9.ggplot()+\
+    p9.theme(subplots_adjust={'right': 0.8})+\
+    p9.geom_point(
+        p9.aes(
+            x="word46",
+            y="word56",
+            color="label"
+        ),
+        data=some_spam)
+show(gg)
+
+```
+
+---
+
+# Correcting for feature scale
+
+- Nearest neighbor algorithm is sensitive to feature scales.
+- Features with larger values are artificially more important.
+- Before learning need to scale each feature (subtract mean, divide by
+  standard deviation).
+  
+---
+
+# What if some features are not important?
+
+- For some problems there may be features which are not relevant to predicting the label.
+- Example from biology: predict whether or not a person has sickle cell disease, using various physical attributes: genetics, height, weight, eye color, etc.
+- Sickle cell disease happens when there are mutations in the beta-globin gene, so other features are totally irrelevant.
+- If you know which features are irrelevant, then exclude them from your feature vector $\mathbf x$.
+- If you do not know, then the irrelevant features will reduce your accuracy.
+
+---
+
+# Add one noise feature using np.random.randn
+
+```{python results=TRUE}
+pd.set_option("display.max_columns", 0)
+mixture_noise = mixture_df.copy()
+nrow, col = mixture_noise.shape
+def get_noise():
+    return np.random.randn(nrow)*100
+mixture_noise["noise1"] = get_noise()
+mixture_noise
+```
+
+---
+
+# Add more noise features
+
+```{python results=TRUE}
+mixture_noise["noise2"] = get_noise()
+pd.set_option("display.max_columns", 4)
+mixture_noise
+```
+
+---
+
+# Simulation of test accuracy as noise features are added
+
+```{python}
+kf = KFold(
+    n_splits=5,
+    random_state=1,
+    shuffle=True)
+mixture_noise = mixture_df.copy()
+acc_df_list = []
+neigh = KNeighborsClassifier(n_neighbors=1)
+for n_noise in range(20):
+    if n_noise > 0:
+        np.random.seed(n_noise)
+        mixture_noise[f"noise{n_noise}"] = get_noise()
+    for fold, indices in enumerate(kf.split(mixture_df)):
+        index_dict = dict(zip(["train","test"],indices))
+        fold_data = {
+            sname:(mixture_noise.iloc[ivec,1:], mixture_noise.party[ivec]) 
+            for sname,ivec in index_dict.items()}
+        neigh.fit(*fold_data["train"])
+        for sname, set_data in fold_data.items():
+            acc_df_list.append(pd.DataFrame({
+                "n_noise":n_noise,
+                "fold_int":fold,
+                "set":sname,
+                "accuracy_percent":100*neigh.score(*set_data)
+            }, index=[0]))
+acc_df = pd.concat(acc_df_list)
+acc_df.query("set == 'train' & accuracy_percent != 100")
+test_df = acc_df.query("set == 'test'")
+test_df["fold"] = pd.Categorical(test_df.fold_int)
+gg = p9.ggplot()+\
+    p9.theme(subplots_adjust={'right': 0.8})+\
+    p9.geom_line(
+        p9.aes(
+            x="n_noise",
+            y="accuracy_percent",
+            group="fold",
+            color="fold"
+        ),
+        data=test_df)
+show(gg)
+```
+
+---
+
+# Complexity analysis / pseudo code
+
+- Let there be $n$ rows and $p$ columns in the train set input/feature
+  matrix, with $k$ neighbors.
+- To compute the distance between a pair of data points/rows, it takes
+  $O(p)$ time (for loop over columns/features).
+- To compute the $n$ distances between all of the train data and a new
+  test data point, it takes $O(np)$ time (for loop over train set).
+- Then you have to sort the $n$ distances to find the smallest $k$
+  distances, $O(n\log n)$.
+- Finally you compute the predicted probability in a for loop over the
+  nearest $k$ neighbors.
+- Overall time complexity $O(np + n\log n)$.

@@ -1,0 +1,19 @@
+\frametitle{torch Dataset/DataLoader helpers for batching}
+\begin{verbatim}
+class CSV(torch.utils.data.Dataset):
+    def __init__(self, features, labels):
+        self.features = features
+        self.labels = labels
+    def __getitem__(self, item):
+        return self.features[item,:], self.labels[item]
+    def __len__(self):
+        return len(self.labels)
+ds = CSV(feature_mat, set_labels["subtrain"])
+dl = torch.utils.data.DataLoader(
+  ds, batch_size=1000, shuffle=True)
+for batch_features, batch_labels in dl:
+    # gradient descent code here.
+\end{verbatim}
+
+Not necessary (you can do your own batching), but can be useful.
+

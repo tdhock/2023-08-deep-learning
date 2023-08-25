@@ -1,0 +1,271 @@
+Backprop algorithm and training neural networks from scratch
+
+Like last week, the goal is to implement a stochastic gradient descent
+algorithm for a neural network. Last week we used torch
+to implement the backpropagation algorithm. This week we will break
+the gradient computation into several different classes in order to
+demonstrate how "automatic differentiation" systems like torch
+work. The advantage of such systems is "separation of concerns," which
+is a common theme in computer science. In this instance we separate
+the gradient computations into separate classes which represent
+operations for computing predictions, so that the person who writes
+the fit() method of the learning algorithm just needs to compose
+instances of these classes, and does not need to understand the
+details of the gradient computations.
+
+** Class: InitialNode
+
+Each instance of this class represents an initial node in the computation
+graph (not computed as a function of other nodes), with attributes
+- value: numpy array representing value computed at this node (created
+  at instantiation during __init__, explained below).
+- grad: numpy array representing gradient of the loss with respect to
+  this node (created during backward method, explained below).
+- You should be able to initialize via code like
+
+#+BEGIN_SRC python
+  import numpy as np
+  feature_node = InitialNode(np.array([
+      [1, 2],
+      [2,3],
+      [1,5]
+  ]))
+  label_node = InitialNode(np.array([[-1, 1, 2]]).T)
+  weight_node = InitialNode(weight_mat)
+#+END_SRC
+
+** Class: Operation
+
+This class represents a node in the computation graph which is
+computed as a function of other nodes. This should be a virtual class,
+which means it should not be instantiated directly, but instead it
+should define methods that are used in subclasses.
+- __init__ method should accept one or more node instances as
+  arguments, then assign them to attributes based on subclass-specific
+  input_names attribute (same length as expected number of arguments
+  to init method). Finally call self.forward() and save result in
+  value attribute.
+- backward() method should begin by calling self.gradient(), resulting
+  in a tuple of gradients (one for each item of input_name). Then save
+  each gradient as the grad attribute of the corresponding input
+  node. You can include error checking code to ensure that the shapes
+  of the value and grad are the same. Finally call backward method of
+  each input node, which results in a recursive call to compute
+  gradients for all nodes in the computation graph.
+
+** Classes: mm,relu,logistic_loss
+
+- should inherit from (be subclass of) Operation.
+- should define input_names attribute as a tuple of names of input
+  nodes.
+- forward() method should return the value computed by this operation,
+  based on values in input nodes. Will be called on instantiation, and
+  result saved in value attribute.
+- gradient() method should return tuple of gradients, one for each
+  input node. Will be called from within backward() method.
+- Usage should be as below:
+
+#+begin_src python
+  a_node = mm(feature_node, weight_node)
+  h_node = relu(a_node)
+  loss_node = logistic_loss(a_node, label_node)
+  loss_node.backward() #assigns grad attributes.
+  print(weight_node.grad) #should be defined by now.
+#+end_src
+
+** Class: AutoMLP (automatic multi-layer perceptron)
+
+This should be similar to what we did last week, except that instead
+of using torch to implement the take_step method, you should use your
+own automatic differentiation classes.
+
+- __init__ method should store hyper-parameters, max_epochs,
+  batch_size, step_size, and units_per_layer (list or numpy array of
+  positive integers, first element should equal number of input
+  features, last element should be 1). For debugging you may want to
+  set units_per_layer = [n_input_features, 1] which means you will get
+  a linear model and batch_size=n_rows (same as linear model
+  homework). Also initialize attribute weight_node_list to a list of
+  node instances, each node value should be a numpy matrix with random
+  values near zero for one of the initial layer prediction functions
+  in the neural network.
+- get_pred_node(X=batch_features) method should 
+  - begin by creating an InitialNode instance from X.
+  - use a for loop over layers to compute intermediate nodes using
+    Operation subclasses (mm/relu). Note that this code is defining
+    both the forward and backward propagation via a computation graph,
+    but the details of the gradient computations are abstracted away
+    in the Operation subclasses.
+  - return the node which represents the vector of predicted values.
+- take_step(X=batch_features, y=batch_labels) method should
+  - Make an InitialNode instance from y.
+  - Use get_pred_node(X) to get a node for predicted scores.
+  - Instantiate the last node in your computation graph,
+    logistic_loss(pred_node, label_node), representing the mean loss to
+    minimize via gradient descent.
+  - call backward() on the final node instance (mean loss) to compute
+    and store gradients in each node. 
+  - use a for loop over nodes in weight_node_list to update each
+    parameter matrix (take a step in the negative gradient direction).
+- fit(X=subtrain_features, y=subtrain_labels) method should run
+  gradient descent until max_epochs is reached. There should be two
+  for loops, first over epochs, then over batches. You should use the
+  take_step method on each batch. Compute the subtrain/validation loss
+  at the end of each epoch.
+- decision_function(X=test_features) method should return a numpy
+  array of real number predicted scores given the current weights in
+  the neural network. Hint: just call get_pred_node then return the
+  value attribute.
+- predict(X=test_features) method should return a numpy array of
+  predicted classes given the current weights in the neural
+  network. Hint: use numpy.where to threshold the return value of
+  decision_function.
+
+** Class: AutoGradLearnerCV
+
+This class should implement hyper-parameter learning (select the
+number of epochs which minimizes loss on validation set). Like the CV
+class last week, this should have a fit method that splits train into
+subtrain and validation sets, then runs gradient descent and computes
+loss with respect to both sets at the end of each epoch.  After
+learning the best number of epochs using the validation set, you
+should re-run gradient descent on the entire train set using that
+number of epochs.
+
+** Hyper-parameter training and diagnostic plot
+
+You should compute the subtrain/validation loss at the end of each
+epoch.
+- You should use two different models (each with a different value of
+  units_per_layer), first with a linear model (no hidden layers), and
+  second with a "deep" neural network (with at least two hidden
+  layers).
+- Run it on the full spam/zip data sets, and make a plot for each data
+  set and model, of subtrain/validation loss as a function of number
+  of epochs. For full credit your subtrain loss should always
+  decrease, and your validation loss should show the expected U shape
+  (if it does not, then you may need to change hyper-parameters). In
+  each plot, what is the best number of epochs?
+
+** Code skeleton
+
+#+begin_src python
+  class InitialNode:
+      """Leaf node in computation graph (not derived from other nodes)"""
+      def __init__(self, value):
+	  """save value as attribute"""
+  class Operation:
+      """virtual base class, derived node in computation graph."""
+      def __init__(self, *node_list):
+	  """store nodes in list as attributes with names given in input_names"""
+      def backward(self):
+	  """call self.gradient, then save results in grad attribute of parent
+	  nodes, then call backward() on parents if necessary."""
+  class mm(Operation):
+      """Matrix multiply"""
+      input_names = TODO
+  class relu(Operation):
+      """non-linear activation"""
+      input_names = TODO
+  class logistic_loss(Operation):
+      """loss of predicted scores given true labels"""
+      input_names = TODO
+  class AutoMLP:
+      def __init__(self, max_epochs, batch_size, step_size, units_per_layer):
+	  """Store hyper-parameters as attributes, then initialize
+	  weight_node_list attribute to a list of InitialNode instances."""
+      def get_pred_node(self, X):
+	  """return node of predicted values for feature matrix X"""
+      def take_step(self, X, y):
+	  """call get_pred_node, then instantiate logistic_loss, call its
+	  backward method to compute gradients, then for loop over
+	  weight_node_list (one iteration of gradient descent).
+	  """
+      def fit(self, X, y):
+	  """Gradient descent learning of weights"""
+	  dl = torch.utils.data.DataLoader(TODO)
+	  loss_df_list = []
+	  for epoch in range(self.max_epochs):
+	      for batch_features, batch_labels in dl:
+		  self.take_step(batch_features, batch_labels)
+	      loss_df_list.append(
+		  TODO)#subtrain/validation loss using current weights.
+	  self.loss_df = pd.concat(loss_df_list)
+      def decision_function(self, X):
+	  """Return numpy vector of predicted scores"""
+      def predict(self, X):
+	  """Return numpy vector of predicted classes"""
+  class AutoGradLearnerCV:
+      def __init__(self, max_epochs, batch_size, step_size, units_per_layer):
+	  self.subtrain_model = AutoMLP(TODO)
+      def fit(self, X, y):
+	  """cross-validation for selecting the best number of epochs"""
+	  self.subtrain_model.validation_data = TODO
+	  self.subtrain_model.fit(TODO_SUBTRAIN_DATA)
+          self.train_model = AutoMLP(max_epochs = best_epochs)
+	  self.train_model.fit(TODO_TRAIN_DATA)
+	def predict(self, X):
+	    self.train_model.predict(X)
+  data_dict = {"spam":TODO, "zip":TODO}
+  test_acc_df_list = []
+  for data_name, TODO in data_dict.items():
+      model_units = {
+	  "linear":(ncol, 1),
+	  "deep":(ncol, 100, 10, 1)
+	  }
+      for test_fold, indices in enumerate(kf.split(TODO)):
+	  for model_name, units_per_layer in model_units.items():
+	      "fit(train data), then predict(test data), then store accuracy"
+	      test_acc_df_list.append(test_row)
+  test_acc_df = pd.concat(test_acc_df_list)
+  p9.ggplot()+TODO
+#+end_src
+
+** Experiments/application
+
+- Use similar experimental setup as last homework on linear models
+  (with 3-fold CV train/test splits defined by KFold, and with
+  GridSearchCV+KNeighborsClassifier and LogisticRegressionCV), but add
+  your new algorithm to compare.
+- Make sure to run experiments on both spam and zip data. This time
+  make sure to scale the data sets before putting them into the
+  data_dict (so you don't have to worry about scaling in neural
+  network code). Show a table of resulting test accuracy numbers, as
+  well as a ggplot like in last homework.
+- On the ggplot y axis there should be at least the following
+  algorithms: featureless, GridSearchCV+KNeighborsClassifier,
+  LogisticRegressionCV, AutoGradLearnerCV_Linear (linear model),
+  AutoGradLearnerCV_Deep (neural network with at least two hidden
+  layers).
+- Does your implementation get similar test accuracy as scikit-learn,
+  or better?  (it should!)
+
+** Extra credit
+
+- Show your MyLogRegCV learner from week 4 on your test accuracy
+  plot. How does it compare to your code this week? (it should be
+  about the same)
+- Show your TorchLearnerCV (deep and linear) results from last week on
+  your test accuracy plot. Is it more accurate than your code this
+  week, or about the same? (it should be about the same if both were
+  implemented correctly)
+- Implement learning an intercept for every hidden/output unit, as an
+  instantiation parameter in AutoMLP(intercept=True). Show both
+  intercept=True and False on your test accuracy plot: which is more
+  accurate, or are they about the same? (it should be about the same,
+  maybe a little more accurate with intercept)
+  
+** FAQ
+
+- How to debug? For debugging you may want to set units_per_layer =
+  [n_input_features, 1] which means you will get a linear model and
+  batch_size=n_rows (same as linear model homework). If you use the
+  same initial weights (and intercept, if present) in this week's
+  code, as you used in the first linear model (week 4), and the torch
+  linear model (week 6), then you should have the exact same loss,
+  gradient, step, etc.
+- How to make sure hyper-parameters are correctly chosen? You need to
+  experiment with hyper-parameters until you find some combination
+  (max_epochs, batch_size, step_size, units_per_layer) which results
+  in the characteristic loss curves (subtrain almost always
+  decreasing, validation U shaped as number of epochs increases).

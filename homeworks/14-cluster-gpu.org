@@ -1,0 +1,216 @@
+Learning on a cluster/GPU
+
+In previous weeks you have implemented neural networks using your
+personal computer, but the goal this week is to use the NAU Monsoon
+cluster, which provides GPUs. The goal is to show that you can greatly
+speed up neural network training using GPUs.
+
+** Login to NAU VPN
+
+To login to the Monsoon cluster, you first have to be on the NAU
+network. That means if you are on campus (for example in the
+engineering building), then you can skip this step. Otherwise, connect
+to the NAU VPN.
+
+** Login to the cluster
+
+#+begin_src
+ssh -Y abc123@monsoon.hpc.nau.edu
+#+end_src
+
+- Replace abc123 with your NAU user ID.
+- the -Y flag is for X forwarding, so you can run GUI apps on the
+  cluster, and see the windows on your PC screen. See
+  https://tdhock.github.io/blog/2019/cygwin-x-forwarding/ for
+  more detailed instructions on windows.
+
+After connecting your prompt should indicate that you are on the login
+node, wind.
+
+#+begin_src
+th798@cmp2986 ~
+$ DISPLAY=:0.0 ssh -Y monsoon.hpc.nau.edu
+th798@monsoon.hpc.nau.edu's password:
+Last login: Mon Oct  3 11:00:58 2022 from 134.114.109.172
+
+################################################################################
+#
+# Welcome to Monsoon - login node: [wind]
+#
+# Red Hat Enterprise Linux release 8.6 (Ootpa) - Kernel: 4.18.0-372.19.1.el8_6.x86_64
+# slurm 21.08.8-2
+#
+# You are logged in as th798
+#
+# Information:
+# - Monsoon now running Enterprise Linux 8
+# - /scratch : files auto DELETED after 30 days
+#
+# Issues or questions: ask-arc@nau.edu
+#
+# Upcoming maintenance on:
+# - TBD
+#
+# Random tip:
+#   "sprio -l" -- List the priority of all jobs in the pending queue
+#
+################################################################################
+
+(emacs1) th798@wind:~$ 
+#+end_src
+  
+** Install your conda environment
+
+First to get access to conda on the cluster you
+
+module load anaconda3
+
+conda env create -f https://raw.githubusercontent.com/tdhock/cs499-599-fall-2022/master/environment.yml
+
+conda activate cs499f22
+
+python -c 'import torch'
+
+Then after logging in again, you should already have conda setup, so
+no need to re-run the =module load= or =conda init= commands. You
+still do need to activate the conda environment though.
+
+** Using srun
+
+To test the cluster functionality, make a script named torch_test.py
+with the following contents:
+
+#+begin_src python
+  import socket
+  import torch
+  torch.set_num_interop_threads(1)
+  torch.set_num_threads(1)
+  print("cuda=%s on %s"%(
+      torch.cuda.is_available(),
+      socket.gethostname()))
+#+end_src
+
+srun is used to run a command on another cluster node.
+
+#+begin_src
+(emacs1) th798@wind:~$ python torch_test.py
+cuda=False on wind
+(emacs1) th798@wind:~$ srun python torch_test.py
+cuda=False on cn68
+(emacs1) th798@wind:~$ srun --gres=gpu:tesla:1 python torch_test.py
+cuda=True on cn32
+#+end_src
+
+When you use the gres argument, you get a GPU, and torch knows about
+it (cuda=True above). 
+
+Below you can specify time, memory, and number of CPUs. --pty bash
+means to start an interactive shell on a compute node (don't do this
+when you ask for GPU, since it will monopolize the GPUs, and they
+should be shared).
+
+#+begin_src shell-script
+srun -t 24:00:00 --mem=8GB --cpus-per-task=1 --pty bash
+#+end_src
+
+** Homework assignment
+
+Your goal is to create a python script for training and testing neural
+networks, and time it on both the CPU and GPU. See if you can find a
+configuration of model size / batch size / etc that results in decent
+speedups using the GPU. 
+- For the neural network code, use one of your previous homeworks.
+- Make sure to do some analysis of the test accuracy numbers you get
+  on the CPU vs GPU. Are they the same? If not, explain why.
+- To do the timings, you can use the =time= command as below:
+
+#+begin_src
+(emacs1) th798@wind:~$ time srun -t 1:00:00 --gres=gpu:tesla:1 --mem=8GB --cpus-per-task=1 python torch_test.py
+cuda=True on cn32
+
+real    0m2.152s
+user    0m0.010s
+sys     0m0.008s
+(emacs1) th798@wind:~$ time srun -t 1:00:00 --mem=8GB --cpus-per-task=1 python torch_test.py
+cuda=False on cn20
+
+real    0m2.319s
+user    0m0.015s
+sys     0m0.002s
+#+end_src
+
+** FAQ
+
+how many cores does my GPU have? Ask torch what kind of GPU it is:
+
+#+begin_src python
+>>> torch.cuda.get_device_properties(0)
+_CudaDeviceProperties(name='Tesla K80', major=3, minor=7, total_memory=11441MB, multi_processor_count=13)
+#+end_src
+
+[[https://www.nvidia.com/en-gb/data-center/tesla-k80/][Tesla K80]] has "4992 NVIDIA CUDA cores with a dual-GPU design"
+
+how much GPU memory am I using? Run the following, after having copied
+at least one tensor to the cuda device.
+
+#+begin_src python
+>>> print(torch.cuda.memory_summary())
+|===========================================================================|
+|                  PyTorch CUDA memory summary, device ID 0                 |
+|---------------------------------------------------------------------------|
+|            CUDA OOMs: 0            |        cudaMalloc retries: 0         |
+|===========================================================================|
+|        Metric         | Cur Usage  | Peak Usage | Tot Alloc  | Tot Freed  |
+|---------------------------------------------------------------------------|
+| Allocated memory      |     512 B  |     512 B  |     512 B  |       0 B  |
+|       from large pool |       0 B  |       0 B  |       0 B  |       0 B  |
+|       from small pool |     512 B  |     512 B  |     512 B  |       0 B  |
+|---------------------------------------------------------------------------|
+| Active memory         |     512 B  |     512 B  |     512 B  |       0 B  |
+|       from large pool |       0 B  |       0 B  |       0 B  |       0 B  |
+|       from small pool |     512 B  |     512 B  |     512 B  |       0 B  |
+|---------------------------------------------------------------------------|
+| GPU reserved memory   |    2048 KB |    2048 KB |    2048 KB |       0 B  |
+|       from large pool |       0 KB |       0 KB |       0 KB |       0 B  |
+|       from small pool |    2048 KB |    2048 KB |    2048 KB |       0 B  |
+|---------------------------------------------------------------------------|
+| Non-releasable memory |    2047 KB |    2047 KB |    2047 KB |       0 B  |
+|       from large pool |       0 KB |       0 KB |       0 KB |       0 B  |
+|       from small pool |    2047 KB |    2047 KB |    2047 KB |       0 B  |
+|---------------------------------------------------------------------------|
+| Allocations           |       1    |       1    |       1    |       0    |
+|       from large pool |       0    |       0    |       0    |       0    |
+|       from small pool |       1    |       1    |       1    |       0    |
+|---------------------------------------------------------------------------|
+| Active allocs         |       1    |       1    |       1    |       0    |
+|       from large pool |       0    |       0    |       0    |       0    |
+|       from small pool |       1    |       1    |       1    |       0    |
+|---------------------------------------------------------------------------|
+| GPU reserved segments |       1    |       1    |       1    |       0    |
+|       from large pool |       0    |       0    |       0    |       0    |
+|       from small pool |       1    |       1    |       1    |       0    |
+|---------------------------------------------------------------------------|
+| Non-releasable allocs |       1    |       1    |       1    |       0    |
+|       from large pool |       0    |       0    |       0    |       0    |
+|       from small pool |       1    |       1    |       1    |       0    |
+|---------------------------------------------------------------------------|
+| Oversize allocations  |       0    |       0    |       0    |       0    |
+|---------------------------------------------------------------------------|
+| Oversize GPU segments |       0    |       0    |       0    |       0    |
+|===========================================================================|
+
+** Extra credit
+
+- Compare with multi-thread CPU parallelism, using srun
+  --cpus-per-task=10 and the following to set the number of CPU
+  threads that torch uses
+
+#+begin_src python
+import os
+import torch
+none_or_str = os.getenv("SLURM_JOB_CPUS_PER_NODE")
+CPUS = int(1 if none_or_str is None else none_or_str)
+torch.set_num_interop_threads(CPUS)
+torch.set_num_threads(CPUS)
+device = "cuda" if torch.cuda.is_available() else "cpu"
+#+end_src

@@ -1,0 +1,209 @@
+Neural networks for multi-class classification
+
+Like previous weeks, the goal is to implement a stochastic gradient
+descent algorithm for a neural network. So far in class we have
+studied binary classification and regression, both of which can be
+done using a model which outputs a single real-valued prediction. This
+week we will implement learning algorithms for multi-class
+classification, which requires more than one output, and for which we
+use the cross entropy / multinomial loss.
+
+- Use zip.test and [[https://pytorch.org/vision/stable/generated/torchvision.datasets.MNIST.html#torchvision.datasets.MNIST][MNIST.test]] data.
+- https://pytorch.org/tutorials/beginner/basics/quickstart_tutorial.html
+  explains that output layer should be linear, with same number of
+  outputs as classes (10), and with [[https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html?highlight=cross#torch.nn.CrossEntropyLoss][torch.nn.CrossEntropyLoss]].
+
+** Class: TorchModel
+
+This can be the exact same code as your week 6 neural network for
+binary classification.
+
+- This class implements a predictive model using the torch framework.
+- similar to https://pytorch.org/tutorials/beginner/basics/quickstart_tutorial.html#creating-models
+- Inherits from torch.nn.Module.
+- Defines an __init__ method which inputs units_per_layer (list of
+  integers -- make sure the number of the units in the last layer is
+  10 when you instantiate).
+- Defines forward method which takes an input matrix (nrow=number of
+  observations, ncol=number of features) and returns a vector with the
+  outputs/predicted scores from the neural network.
+
+** Class: TorchLearner
+
+This class should be very similar to your previous code, but with one
+key difference: use the cross-entropy loss.
+This class implements fit/predict methods for weight matrix parameter
+learning and making predictions with the previous class. 
+
+- __init__ method should store hyper-parameters, max_epochs,
+  batch_size, step_size, and units_per_layer (list or numpy array of
+  positive integers, first element should equal number of input
+  features, last element should be 1). Also instantiate a
+  TorchModel() and save as an attribute of this instance,
+  self.model. Also instantiate torch.optim.SGD and save as
+  self.optimizer, and instantiate torch.nn.CrossEntropyLoss and save
+  as self.loss_fun.
+- take_step(X=batch_features, y=batch_labels) method should
+  - begin by computing self.model(X) and saving as vector of
+    predictions for this batch.
+  - Use self.loss_fun to compute the mean loss.
+  - Use optimizer.zero_grad, loss.backward, optimizer.step to compute
+    gradients and take a step as in
+    https://pytorch.org/tutorials/beginner/basics/quickstart_tutorial.html#optimizing-the-model-parameters
+- fit(X=subtrain_features, y=subtrain_labels) method should run
+  gradient descent until max_epochs is reached. There should be two
+  for loops, first over epochs, then over batches. You should use the
+  take_step method on each batch. Compute and store the
+  subtrain/validation loss at the end of each epoch.
+- decision_function(X=test_features) method should return
+  self.model(X), a matrix of predicted scores (nrow = number of test
+  observations/rows, ncol = number of classes).
+- predict(X=test_features) method should return a tensor/array of
+  predicted classes (integers) given the current weights in the neural
+  network. You just have to call decision_function and then return,
+  for every row, whichever column has the largest value.
+
+** Class: TorchLearnerCV
+
+This class should be very similar to your previous code, and should
+implement hyper-parameter learning (select the number of epochs which
+minimizes cross-entropy loss on validation set).
+
+This class should have a fit method that splits train into subtrain
+and validation sets, then instantiates TorchLearner and calls its fit
+method to run gradient descent, computing loss with respect to both
+sets at the end of each epoch. After learning the best number of
+epochs using the validation set, you should re-run gradient descent on
+the entire train set using that number of epochs.
+
+** Hyper-parameter training and diagnostic plot
+
+Plot the subtrain/validation loss values as a function of the number
+of epochs.
+- You should use two different models (each with a different value of
+  units_per_layer), first with a linear model (no hidden layers), and
+  second with a "deep" neural network (with at least two hidden
+  layers).
+- Run it on the full data sets, and make a plot for each data set and
+  model, of subtrain/validation loss as a function of number of
+  epochs.
+- For full credit your subtrain loss should almost always decrease,
+  and your validation loss should show the expected U shape (if it
+  does not, then you may need to change hyper-parameters).
+- In each plot, what is the best number of epochs?
+
+** Experiments/application
+
+Use similar experimental setup as previous homeworks (with 3-fold CV
+train/test splits defined by KFold), with these differences:
+- No scaling necessary! Features should already be scaled between -1
+  and 1 (zip) or 0 and 1 (MNIST).
+- Use zip.test and [[https://pytorch.org/vision/stable/generated/torchvision.datasets.MNIST.html#torchvision.datasets.MNIST][MNIST.test]] data. Note that if you use torch interface to
+  MNIST, you can read the whole data set into memory via the following code
+#+begin_src python
+  import torchvision
+  import torch
+  ds = torchvision.datasets.MNIST(
+      root="~/teaching/cs499-599-fall-2022/data", 
+      download=True,
+      transform=torchvision.transforms.ToTensor(),
+      train=False)
+  dl = torch.utils.data.DataLoader(ds, batch_size=len(ds), shuffle=False)
+  for mnist_features, mnist_labels in dl:
+      pass
+  mnist_features.flatten(start_dim=1).numpy()
+  mnist_labels.numpy()
+#+end_src
+
+- for the featureless baseline, for every test observation, you should
+  predict the most frequent train label value.
+- compute and plot test accuracy, for at least the following
+  algorithms: feautureless, GridSearchCV+KNeighborsClassifier and
+  LogisticRegressionCV, TorchLearnerCV_linear, TorchLearnerCV_deep.
+
+Like with previous homeworks,
+- Does your implementation get similar test accuracy as scikit-learn,
+  or better?  (it should!)
+
+** Code skeleton
+
+#+begin_src python
+  class TorchModel:
+      """same as before"""
+      def __init__(self, *units_per_layer):
+	  """make a torch.nn.Sequential"""
+      def forward(self, feature_tensor):
+	  """compute predictions"""
+  class TorchLearner:
+      def __init__(self, max_epochs, batch_size, step_size, units_per_layer):
+	  """Store hyper-parameters, TorchModel instance, loss, etc."""
+      def take_step(self, X, y):
+	  """compute predictions, loss, gradients, take one step"""
+      def fit(self, X, y):
+	  """Gradient descent learning of weights"""
+	  dl = torch.utils.data.DataLoader(TODO)
+	  loss_df_list = []
+	  for epoch in range(self.max_epochs):
+	      for batch_features, batch_labels in dl:
+		  self.take_step(batch_features, batch_labels)
+	      loss_df_list.append(
+		  TODO)#subtrain/validation loss using current weights.
+	  self.loss_df = pd.concat(loss_df_list)
+      def predict(self, X):
+	  """Return numpy vector of predictions"""
+  class TorchLearnerCV:
+      def __init__(self, max_epochs, batch_size, step_size, units_per_layer):
+	  self.subtrain_learner = TorchLearner(TODO)
+      def fit(self, X, y):
+	  """cross-validation for selecting the best number of epochs"""
+	  self.subtrain_learner.validation_data = TODO
+	  self.subtrain_learner.fit(TODO_SUBTRAIN_DATA)
+	  self.train_learner = TorchLearner(max_epochs = best_epochs)
+	  self.train_learner.fit(TODO_TRAIN_DATA)
+	def predict(self, X):
+	    self.train_learner.predict(X)
+  data_dict = {
+      "zip":(FEATURES, LABELS),
+      "MNIST":(FEATURES, LABELS)}
+  test_error_df_list = []
+  for data_name, TODO in data_dict.items():
+      model_units = {
+	  "linear":(ncol, n_classes),
+	  "deep":(ncol, 100, 10, n_classes)
+	  }
+      for test_fold, indices in enumerate(kf.split(TODO)):
+	  for model_name, units_per_layer in model_units.items():
+	      "fit(train data), then predict(test data), then store test error"
+	      test_error_df_list.append(test_row)
+  test_error_df = pd.concat(test_error_df_list)
+  p9.ggplot()+TODO
+#+end_src
+
+** Extra credit
+
+- Implement learning an intercept for every hidden/output unit, as an
+  instantiation parameter in TorchModel(intercept=True). Show both
+  intercept=True and False on your test accuracy plot: which is more
+  accurate, or are they about the same? (it should be about the same,
+  maybe a little more accurate with intercept)
+- Adapt your week 7 home-made Auto-grad classes to implement deep and
+  linear learners (you will have to implement a new Operation
+  sub-class for the cross entropy loss). Show these on your test error
+  plot --- do they have similar test error rates as the corresponding
+  torch learners?
+- Compare over-parameterized models (TorchModel as above, outputs 10
+  columns) with a smaller model (TorchSmall, outputs 9 columns, fewer
+  parameters to learn). Is there any difference in test accuracy?
+  (there should be little difference). Hint: you can take the output
+  of the neural network and add a column of zeros via the code below,
+  and then just plug the resulting pred_z_mat into CrossEntropyLoss.
+
+#+begin_src python
+  batch_size = 2
+  torch_small_output = torch.randn(batch_size, 9) 
+  torch.cat([
+      torch.zeros(batch_size).reshape(batch_size,1),
+      torch_small_output
+  ], dim=1)
+#+end_src
+  

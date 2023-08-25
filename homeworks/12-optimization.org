@@ -1,0 +1,241 @@
+Neural network optimization
+
+** Overview
+
+In previous projects we have mainly used classic stochastic gradient
+descent as the optimization algorithm. In this project the goal is to
+explore other algorithms for optmizing neural networks. For this
+project you need to use torch.
+Your experiment should result in a plot of subtrain/validation loss
+(on the y axis) as a function of a number of hidden layers (on the x
+axis), for various optimization algorithms.
+
+** Class: OptimizerMLP
+
+This class should define a learner with fit and predict methods,
+similar to what we did last week. Modify it so that you can specify
+the optimization algorithm to use as attributes or instantiation
+parameters of the learner. For example if you want to use SGD with
+momentum=0.5,
+
+#+begin_src python
+  omlp = OptimizerMLP(max_epochs=100, units_per_layer=[n_features,100,10,1])
+  omlp.opt_name = "SGD"
+  omlp.opt_params = {"momentum":0.5}
+  omlp.fit(subtrain_features, subtrain_labels)
+#+end_src
+
+** Class: MyCV
+
+This should be similar to previous homeworks (similar to
+GridSearchCV in scikit-learn). You should be able to specify
+hyper-parameter values to search over as a list of dictionaries. Each
+dictionary represents a particular hyper-parameter combination,
+
+#+begin_src python
+  param_grid = []
+  for momentum in 0.1, 0.5:
+      param_grid.append({
+          "opt_name":"SGD",
+          "opt_params":{"momentum":momentum}
+      })
+  for beta1 in 0.85, 0.9, 0.95:
+      for beta2 in 0.99, 0.999, 0.9999:
+          param_grid.append({
+              "opt_name":"Adam",
+              "opt_params":{"betas":(beta1, beta2)}
+          })
+  learner_instance = MyCV(
+    estimator=omlp, 
+    param_grid=param_grid,
+    cv=K)
+  learner_instance.fit(train_features, train_labels)
+#+end_src
+
+The fit method should use K-fold cross-validation to do K splits of
+the train data into subtrain/validation sets. For each split and
+hyper-parameter dictionary you should call estimator.fit on the
+subtrain data and then compute the zero-one loss on the
+subtrain/validation data. Save all loss values in
+learner_instance.loss_each_fold, which should be a DataFrame with
+columns fold, set, epoch, loss, opt_name, opt_params. Also save mean loss
+over folds in learner_instance.loss_mean, which should be a DataFrame
+with columns set, epoch, loss, opt_name, opt_params. Yes a DataFrame can have
+a column like opt_params, each entry of which is a python dictionary,
+for example:
+
+#+begin_src python
+>>> pd.DataFrame(param_grid)
+   opt_name                 opt_params
+0       SGD          {'momentum': 0.1}
+1       SGD          {'momentum': 0.5}
+2      Adam    {'betas': (0.85, 0.99)}
+3      Adam   {'betas': (0.85, 0.999)}
+4      Adam  {'betas': (0.85, 0.9999)}
+5      Adam     {'betas': (0.9, 0.99)}
+6      Adam    {'betas': (0.9, 0.999)}
+7      Adam   {'betas': (0.9, 0.9999)}
+8      Adam    {'betas': (0.95, 0.99)}
+9      Adam   {'betas': (0.95, 0.999)}
+10     Adam  {'betas': (0.95, 0.9999)}
+#+end_src
+
+Save best hyper-parameters in learner_instance.best_param, which
+should be a dictionary, one of the elements of param_grid. Finally use
+best_param dictionary to set attributes of estimator, save that as
+learner_instance.estimator, and call estimator.fit(train_features,
+train_labels). Then the predict/decision_function methods can just
+call the respective methods of learner_instance.estimator.
+
+** Plotting loss for various optimizers
+
+- Load the spam and zip data sets as usual from CSV.
+- Scale each input matrix, same as in previous projects.
+- Next instantiate MyCV with at least two different optimization
+  algorithms, and at least two different parameters for each. Use its
+  fit method to compute mean loss for subtrain/validation sets, which
+  should be saved as the loss_mean attribute.
+- Make a two-panel plot (one panel for spam, one for zip) which shows
+  the zero-one loss as a function of epochs, with different
+  opt_name/opt_params in different facets/plots. Use a different color
+  for each set, e.g. subtrain=red, validation=blue. Draw a point to
+  emphasize the minimum of the validation loss curve. Which
+  combination of hyper-parameters resulted in the best validation loss?
+- Your plots should show the characteristic U shape of the validation
+  loss curve, and monotonic subtrain loss curve.
+
+** Test error experiment
+
+- Use similar experimental setup as previous homeworks
+  (with 3-fold CV train/test splits defined by KFold, and with
+  GridSearchCV+KNeighborsClassifier and LogisticRegressionCV), but add
+  your new algorithm to compare.
+- Make sure to run experiments on both spam and zip data. This time
+  make sure to scale the data sets before putting them into the
+  data_dict and before any splitting (so you don't have to worry about
+  scaling in neural network code). Show a table of resulting test
+  accuracy numbers, as well as a ggplot like in last homework. On the
+  ggplot y axis there should be at least the following algorithms:
+  featureless, GridSearchCV+KNeighborsClassifier,
+  LogisticRegressionCV, MyCV+OptimizerMLP.
+- Does your implementation get similar test accuracy as scikit-learn,
+  or better?  (it should!)
+
+** Extra credit
+
+- 10 points if you do an additional comparison of batch sizes, for
+  example 1,10,100,nrow. Plot subtrain/validation loss for each batch
+  size in a different panel. Which batch size results in the best
+  validation loss?
+
+** FAQ
+
+I get nan in a DataFrame column when I expected a dictionary? There
+are two ways to construct a valid DataFrame, see below:
+
+#+begin_src python
+  >>> import pandas as pd
+  >>> list_of_dicts = [{"algo":"SGD", "params":{"momentum":0.5}}]
+  >>> pd.DataFrame(list_of_dicts)
+    algo             params
+  0  SGD  {'momentum': 0.5}
+  >>> dict_of_iterables = {"algo":["SGD"], "params":[{"momentum":0.5}]}
+  >>> pd.DataFrame(dict_of_iterables)
+    algo             params
+  0  SGD  {'momentum': 0.5}
+  ### what not to do:
+  >>> pd.DataFrame({"algo":"SGD", "params":{"momentum":0.5}}, index=[0])
+    algo  params
+  0  SGD     NaN
+  >>> pd.DataFrame({"algo":"SGD", "params":{"momentum":0.5}})
+	   algo  params
+  momentum  SGD     0.5
+  >>> pd.DataFrame({"algo":["SGD"], "params":{"momentum":0.5}})
+  Traceback (most recent call last):
+    File "<stdin>", line 1, in <module>
+    File "c:\Users\th798\miniconda3\envs\cs570s22\lib\site-packages\pandas\core\frame.py", line 614, in __init__
+      mgr = dict_to_mgr(data, index, columns, dtype=dtype, copy=copy, typ=manager)
+    File "c:\Users\th798\miniconda3\envs\cs570s22\lib\site-packages\pandas\core\internals\construction.py", line 465, in dict_to_mgr
+      arrays, data_names, index, columns, dtype=dtype, typ=typ, consolidate=copy
+    File "c:\Users\th798\miniconda3\envs\cs570s22\lib\site-packages\pandas\core\internals\construction.py", line 119, in arrays_to_mgr
+      index = _extract_index(arrays)
+    File "c:\Users\th798\miniconda3\envs\cs570s22\lib\site-packages\pandas\core\internals\construction.py", line 639, in _extract_index
+      "Mixing dicts with non-Series may lead to ambiguous ordering."
+  ValueError: Mixing dicts with non-Series may lead to ambiguous ordering.
+#+end_src
+
+How to group by parameter dictionaries? Pandas needs a non-mutable
+type to group by, so convert your parameter dictionary to a string.
+
+#+begin_src python
+  loss_list = [
+      {"algo":"SGD", "params":{"lr":0.1,"momentum":0.5}, "set":"validation", "fold":1, "loss":0.25},
+      {"algo":"SGD", "params":{"lr":0.1,"momentum":0.9}, "set":"validation", "fold":1, "loss":0.05},
+      {"algo":"SGD", "params":{"lr":0.1,"momentum":0.9}, "set":"validation", "fold":2, "loss":0.55},
+      {"algo":"Adam", "params":{"lr":0.1}, "set":"validation", "fold":1, "loss":0.22},
+      ]
+  loss_df = pd.DataFrame(loss_list)
+  loss_df.groupby("params")["loss"].mean()
+  def dict_to_str(param_dict):
+      return ', '.join(["%s=%s"%tup for tup in param_dict.items()])
+  loss_df["params_str"] = loss_df.params.apply(dict_to_str)
+  loss_df
+  mean_df = loss_df.groupby(["params_str","algo","set"])["loss"].mean().reset_index()
+  mean_df
+#+end_src
+
+#+begin_src python
+>>> loss_list = [
+...     {"algo":"SGD", "params":{"lr":0.1,"momentum":0.5}, "set":"validation", "fold":1, "loss":0.25},
+...     {"algo":"SGD", "params":{"lr":0.1,"momentum":0.9}, "set":"validation", "fold":1, "loss":0.05},
+...     {"algo":"SGD", "params":{"lr":0.1,"momentum":0.9}, "set":"validation", "fold":2, "loss":0.55},
+...     {"algo":"Adam", "params":{"lr":0.1}, "set":"validation", "fold":1, "loss":0.22},
+...     ]
+>>> loss_df = pd.DataFrame(loss_list)
+>>> loss_df.groupby("params")["loss"].mean()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "c:/Users/th798/AppData/Local/Temp/py0PE1dt", line 8, in <module>
+  File "c:\Users\th798\miniconda3\envs\cs570s22\lib\site-packages\pandas\core\groupby\groupby.py", line 1687, in mean
+    numeric_only=numeric_only,
+  File "c:\Users\th798\miniconda3\envs\cs570s22\lib\site-packages\pandas\core\groupby\generic.py", line 352, in _cython_agg_general
+    result = array_func(objvals)
+  File "c:\Users\th798\miniconda3\envs\cs570s22\lib\site-packages\pandas\core\groupby\generic.py", line 341, in array_func
+    "aggregate", values, how, axis=data.ndim - 1, min_count=min_count
+  File "c:\Users\th798\miniconda3\envs\cs570s22\lib\site-packages\pandas\core\groupby\ops.py", line 976, in _cython_operation
+    ids, _, _ = self.group_info
+  File "pandas\_libs\properties.pyx", line 37, in pandas._libs.properties.CachedProperty.__get__
+  File "c:\Users\th798\miniconda3\envs\cs570s22\lib\site-packages\pandas\core\groupby\ops.py", line 879, in group_info
+    comp_ids, obs_group_ids = self._get_compressed_codes()
+  File "c:\Users\th798\miniconda3\envs\cs570s22\lib\site-packages\pandas\core\groupby\ops.py", line 903, in _get_compressed_codes
+    return ping.codes, np.arange(len(ping.group_index))
+  File "c:\Users\th798\miniconda3\envs\cs570s22\lib\site-packages\pandas\core\groupby\grouper.py", line 612, in codes
+    return self._codes_and_uniques[0]
+  File "pandas\_libs\properties.pyx", line 37, in pandas._libs.properties.CachedProperty.__get__
+  File "c:\Users\th798\miniconda3\envs\cs570s22\lib\site-packages\pandas\core\groupby\grouper.py", line 671, in _codes_and_uniques
+    self.grouping_vector, sort=self._sort, na_sentinel=na_sentinel
+  File "c:\Users\th798\miniconda3\envs\cs570s22\lib\site-packages\pandas\core\algorithms.py", line 762, in factorize
+    values, na_sentinel=na_sentinel, size_hint=size_hint, na_value=na_value
+  File "c:\Users\th798\miniconda3\envs\cs570s22\lib\site-packages\pandas\core\algorithms.py", line 564, in factorize_array
+    values, na_sentinel=na_sentinel, na_value=na_value, mask=mask
+  File "pandas\_libs\hashtable_class_helper.pxi", line 5396, in pandas._libs.hashtable.PyObjectHashTable.factorize
+  File "pandas\_libs\hashtable_class_helper.pxi", line 5310, in pandas._libs.hashtable.PyObjectHashTable._unique
+TypeError: unhashable type: 'dict'
+>>> def dict_to_str(param_dict):
+...     return ', '.join(["%s=%s"%tup for tup in param_dict.items()])
+>>> loss_df["params_str"] = loss_df.params.apply(dict_to_str)
+>>> loss_df
+   algo                        params  ...  loss            params_str
+0   SGD  {'lr': 0.1, 'momentum': 0.5}  ...  0.25  lr=0.1, momentum=0.5
+1   SGD  {'lr': 0.1, 'momentum': 0.9}  ...  0.05  lr=0.1, momentum=0.9
+2   SGD  {'lr': 0.1, 'momentum': 0.9}  ...  0.55  lr=0.1, momentum=0.9
+3  Adam                   {'lr': 0.1}  ...  0.22                lr=0.1
+
+[4 rows x 6 columns]
+>>> mean_df = loss_df.groupby(["params_str","algo","set"])["loss"].mean().reset_index()
+>>> mean_df
+             params_str  algo         set  loss
+0                lr=0.1  Adam  validation  0.22
+1  lr=0.1, momentum=0.5   SGD  validation  0.25
+2  lr=0.1, momentum=0.9   SGD  validation  0.30
+#+end_src

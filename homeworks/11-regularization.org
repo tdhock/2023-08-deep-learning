@@ -1,0 +1,128 @@
+Neural network regularization 
+
+** Overview
+
+In previous projects we have mainly used the number of
+iterations/epochs of gradient descent as the regularization
+parameter. In this project the goal is to demonstrate other techniques
+for regularizing neural networks. For this project you need to use
+torch.
+
+The goal is to do computational experiments that demonstrate how the
+number of hidden layers can be tuned to regularize a neural
+network. Your experiment should result in a plot of
+subtrain/validation loss (on the y axis) as a function of a number of
+hidden layers (on the x axis). You can get extra credit if you
+investigate other regularization parameters described in the book (see
+below), but we have not discussed in class/[[https://www.youtube.com/playlist?list=PLwc48KSH3D1MvTf_JOI00_eIPcoeYMM_o][screencasts]]. 
+
+** Class: RegularizedMLP
+
+This class should define a learner with fit and predict methods,
+similar to what we did last week. Modify it so that you can specify
+different regularization hyper-parameter values as an attribute of the
+learner instance. For example if you want to use the number of hidden
+layers as a regularization hyper-parameter,
+
+#+begin_src python
+rmlp = RegularizedMLP(max_epochs=100, units_per_layer=100)
+rmlp.hidden_layers = 2
+rmlp.fit(subtrain_features, subtrain_labels)
+#+end_src
+
+** Class: MyCV
+
+This should be similar to previous homeworks (similar to
+GridSearchCV in scikit-learn). You should be able to specify
+hyper-parameter values to search over as a list of dictionaries. Each
+dictionary represents a particular hyper-parameter combination,
+
+#+begin_center python
+learner_instance = MyCV(
+  estimator=rmlp, 
+  param_grid=[{'hidden_layers':L} for L in range(10)],
+  cv=K)
+learner_instance.fit(train_features, train_labels)
+#+end_center
+
+The fit method should use cross-validation to split
+the train data into subtrain/validation sets. For each split and
+hyper-parameter dictionary you should call estimator.fit on the
+subtrain data and then compute the zero-one loss on the
+subtrain/validation data. Save all loss values in
+learner_instance.loss_each_fold, which should be a DataFrame with
+columns fold, set, loss, hidden_layers (but hidden_layers column name
+should be taken from dictionary keys, not hard coded into the MyCV
+class). Also save mean loss over folds in learner_instance.loss_mean,
+which should be a DataFrame with columns set, loss, hidden_layers
+(these are the data you should plot to show the regularizing effect of
+the number of hidden layers). Save best hyper-parameters in
+learner_instance.best_param, which should be a dictionary, one of the
+elements of param_grid. Finally use best_param dictionary to set
+attributes of estimator, save that as learner_instance.estimator, and
+call estimator.fit(train_features, train_labels). Then the
+predict/decision_function methods can just call the respective methods
+of learner_instance.estimator.
+
+** Plotting loss vs regularization hyper-parameter
+
+- Load the spam and zip data sets as usual from CSV.
+- Scale each input matrix, same as in previous projects.
+- Next use MyCV(cv=2) to compute mean loss for subtrain/validation
+  sets, which should be saved as the loss_mean attribute.
+- Make a two-panel plot (one panel for spam, one for zip) which shows
+  the zero-one loss as a function of the regularization
+  hyper-parameter. X axis should be the number of hidden layers,
+  NOT the number of epochs. Use a different color for each set,
+  e.g. subtrain=red, validation=blue. Draw a point to emphasize the
+  minimum of the validation loss curve.
+- Your plots should show the characteristic U shape of the validation
+  loss curve, and monotonic subtrain loss curve. As the strength of
+  regularization decreases, the subtrain loss should always decrease,
+  whereas the validation loss should decrease up to a certain point,
+  and then start increasing (overfitting). If your curves don't then
+  you should try increasing the number of regularization
+  hyper-parameters, and/or increasing the maximum model complexity
+  (e.g. 2 hidden layers is too small to overfit, 5 or 10
+  would be more likely to result in overfitting).
+
+** Test error experiment
+
+- Use similar experimental setup as previous homeworks
+  (with 3-fold CV train/test splits defined by KFold, and with
+  GridSearchCV+KNeighborsClassifier and LogisticRegressionCV), but add
+  your new algorithm to compare.
+- Make sure to run experiments on both spam and zip data. This time
+  make sure to scale the data sets before putting them into the
+  data_dict and before any splitting (so you don't have to worry about
+  scaling in neural network code). Show a table of resulting test
+  accuracy numbers, as well as a ggplot like in last homework. On the
+  ggplot y axis there should be at least the following algorithms:
+  featureless, GridSearchCV+KNeighborsClassifier,
+  LogisticRegressionCV, MyCV+RegularizedMLP.
+- Does your implementation get similar test accuracy as scikit-learn,
+  or better?  (it should!)
+
+** Extra credit
+
+- 10 points if your test error figure includes a neural network with
+  early stopping regularization (and other hyper-parameters such as
+  number of hidden layers fixed), as in previous homeworks. Does early
+  stopping regularization work better than regularizing using the
+  number of layers?
+- 10 points if your test error figure includes a neural network with
+  two trained hyper-parameters, max_epochs and number of hidden layers.
+- 10 points if you compute and plot ROC curves for each (test fold,
+  algorithm) combination. Make sure each algorithm is drawn in a
+  different color, and there is a legend that the reader can use to
+  read the figure. 
+- 10 points if you compute area under the ROC curve (AUC) and include
+  that as another evaluation metric (in a separate panel/plot) to
+  compare the test accuracy of the algorithms.
+- 10 points for subtrain/validation loss plot for regularization via
+  Parameter norm penalties (section 7.1 of book), X axis = degree of L2 /
+  weight decay. 
+- 10 points for plot of noise robustness (section 7.5), X axis =
+  degree of noise/perturbation. 
+- 10 points for plot of dropout (section 7.12), X axis = probability
+  of dropout.

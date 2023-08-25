@@ -1,16 +1,12 @@
-Computer Science CS 499/599 at Northern Arizona University, Fall 2022
+Computer Science CS 599 at Northern Arizona University, Fall 2023
 
-Class title: Contemporary developments, topic Deep Learning.
+Topic: Deep Learning.
 
-Class number: CS 499-002 (5893).
+Dates: Aug 28 - Dec 15.
 
-Dates: Aug 29, 2022-Dec 16, 2022
-
-Meeting time/place: MWF 9:10-10, ENG 314.
+Meeting time/place: MWF 10:20-11:10 TODO.
 
 Syllabus: [[https://docs.google.com/document/d/10FvF61hB1WpBNGG5hoxJwT3GMewa603ZzAblGGdEwIQ/edit?usp=sharing][Google Doc]].
-
-Slack: https://join.slack.com/t/nau-zpe9663/shared_invite/zt-1f03d17v9-YpBVXHA0IeqFzPGIGF385g 
 
 ** Textbooks
 
@@ -32,60 +28,50 @@ Homework topics and readings for each week are listed below. The date
 of the Monday of each week is written. Each homework is due Friday of
 that week, 11:59PM.
 
-- Aug 29, [[file:homeworks/01-installation.org][Homework week 1]]: installing software, reading CSV, data
-  visualization.
+- Aug 28, [[file:homeworks/01-installation.org][Homework week 1]]: installing software, reading CSV.
   - [[file:installation.org][Installation instructions]], [[file:slides/01-intro-slides/slides.pdf][slides]].
-- Sep 5, [[file:homeworks/02-k-fold-cross-validation.org][Homework week 2]]: k-fold cross-validation, nearest neighbors
+- Sep 4, [[file:homeworks/02-data-viz.org][Homework week 2]]: data visualization.
+- Sep 11,  [[file:homeworks/03-k-fold-cross-validation.org][Homework week 3]]: k-fold cross-validation, nearest neighbors
   and linear models.
   - [[file:slides/02-cross-validation.pdf][Slides]].
   - Reading [[https://www.deeplearningbook.org/contents/ml.html][DL5]] (The most important parts are 5.2 and 5.3).
-- Sep 12, [[file:homeworks/03-nearest-neighbors.org][Homework week 3]]: nearest neighbors.
+- Sep 18,  [[file:homeworks/04-nearest-neighbors.org][Homework week 4]]: nearest neighbors.
   - [[file:slides/03-nearest-neighbors.pdf][Slides]].
   - Reading [[https://www.deeplearningbook.org/contents/ml.html][DL5]].
-- Sep 19, [[file:homeworks/04-gradient-descent-logistic-regression.org][Homework week 4]]: linear model with early stopping
+- Sep 25,  [[file:homeworks/05-linear-model-early-stopping.org][Homework week 5]]: linear model with early stopping
   regularization.
   - [[file:slides/04-linear-models.pdf][Slides]], [[http://ml.nau.edu/viz/2022-02-02-gradient-descent-regression/][interactive figure showing gradient descent for regression]] ([[https://github.com/tdhock/cs570-spring-2022/blob/master/figure-gradient-descent-regression.R][source]]).
   - Reading [[https://www.deeplearningbook.org/contents/ml.html][DL5]], [[https://www.deeplearningbook.org/contents/numerical.html][DL4.3]]. 
-- Sep 26, week 5 review and exam.
-  - [[file:exams/exam1_practice.pdf][Exam review]] is Mon Sept 26.
-  - No class Weds Sept 28.
-  - Exam is Fri Sept 30, in class. During the exam you are allowed to
-    use one page of handwritten notes.
-  - [[file:exams/exam1_practice.pdf][Practice exam PDF]].
-- Oct 3, [[file:homeworks/06-torch-mlp.org][Homework week 6]]:
+- Oct 2, [[file:homeworks/06-torch-mlp.org][Homework week 6]]:
   training linear model and neural networks using torch.
   - [[file:slides/torch-part1/06-backprop.pdf][Slides]].
   - Reading [[https://www.deeplearningbook.org/contents/mlp.html][DL6]].
-- Oct 10, [[file:homeworks/07-auto-diff.org][Homework week 7]]:
+- Oct 9, [[file:homeworks/07-auto-diff.org][Homework week 7]]:
   implementing an automatic differentiation system.
   - [[file:slides/torch-part1/06-backprop.pdf][Slides]], section Automatic differentiation.
   - Reading [[https://www.deeplearningbook.org/contents/mlp.html][DL6.5]].
-- Oct 17, [[file:homeworks/08-regression.org][Homework week 8]]: neural networks for regression.
-  - Exam 1 review/solutions Fri Oct 21.
-- Oct 24, week 9 review and exam 2.
-  - No class Mon Oct 24.
-  - Exam 2 preview/solutions for extra credit is Weds Oct 26.
-  - Exam is Fri Oct 28, in class. During the exam you are allowed to
-    use one page of handwritten notes.
+- Oct 16, week 8: review and exam.
+  - [[file:exams/exam1_practice.pdf][Exam 1 practice PDF]].
   - [[file:exams/exam2_practice.pdf][Practice exam 2 PDF]].
-- Oct 31, [[file:homeworks/10-multi-class.org][Homework week 10]]: neural networks for multi-class
+- Oct 23, [[file:homeworks/09-regression.org][Homework week 9]]: neural networks for regression.
+- Oct 30, [[file:homeworks/10-multi-class.org][Homework week 10]]: neural networks for multi-class
   classification.
   - [[file:slides/torch-part1/06-backprop.pdf][Slides]]. 
   - Reading [[https://hastie.su.domains/ElemStatLearn/printings/ESLII_print12.pdf][ESL4.4]], [[https://www.deeplearningbook.org/contents/mlp.html][DL6.2]], especially section 6.2.2.3 Softmax Units for
     Multinoulli Output Distributions.
-- Nov 7, [[file:homeworks/11-regularization.org][Homework week 11]]: regularizing neural networks.
+- Nov 6, [[file:homeworks/11-regularization.org][Homework week 11]]: regularizing neural networks.
   - Reading [[https://www.deeplearningbook.org/contents/regularization.html][DL7]].
-- Nov 14, [[file:homeworks/12-optimization.org][Homework week 12]]: optimization.
+- Nov 13, [[file:homeworks/12-optimization.org][Homework week 12]]: optimization.
   - [[file:slides/12-optimization.pdf][Slides]].
   - Reading [[https://www.deeplearningbook.org/contents/optimization.html][DL8]].
-- Nov 21, [[file:homeworks/13-convolutional-networks.org][Homework week 13]]: convolutional networks.
+- Nov 20, [[file:homeworks/13-convolutional-networks.org][Homework week 13]]: convolutional networks.
   - [[file:slides/torch-part1/12-convolutional-networks.pdf][Slides]].
   - Reading [[https://www.deeplearningbook.org/contents/convnets.html][DL9]].
-- Nov 28, [[file:homeworks/14-cluster-gpu.org][Homework week 14]]: learning on a cluster/GPU.
+- Nov 27, [[file:homeworks/14-cluster-gpu.org][Homework week 14]]: learning on a cluster/GPU.
   - [[file:slides/torch-part1/06-backprop.pdf][My Slides]].
   - [[https://rcdata.nau.edu/hpcpub/workshops/odintro.pdf][Monsoon slides]].
-- Dec 5, reading week, [[file:exams/exam3_practice.org][exam review]] Weds Dec 7, 9:10-10AM. Extra credit: Karl, Savannah, Nitin, Danny, Miles.
-- Final exam, Weds Dec 14, 8-9:30AM.
+- Dec 4, reading week, [[file:exams/exam3_practice.org][exam review]] TODO DATE.
+- Finals week, exam TODO DATE.
 
 ** Rubric for homeworks
 

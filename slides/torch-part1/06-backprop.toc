@@ -1,0 +1,5 @@
+\beamer@sectionintoc {1}{Fully connected multi-layer Neural Networks}{2}{0}{1}
+\beamer@sectionintoc {2}{Computing gradients and learning weights}{14}{0}{2}
+\beamer@sectionintoc {3}{Automatic differentiation}{27}{0}{3}
+\beamer@sectionintoc {4}{Multi-class classification}{37}{0}{4}
+\beamer@sectionintoc {5}{Torch}{54}{0}{5}
