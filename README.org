@@ -1,0 +1,179 @@
+Computer Science CS 499/599 at Northern Arizona University, Fall 2022
+
+Class title: Contemporary developments, topic Deep Learning.
+
+Class number: CS 499-002 (5893).
+
+Dates: Aug 29, 2022-Dec 16, 2022
+
+Meeting time/place: MWF 9:10-10, ENG 314.
+
+Syllabus: [[https://docs.google.com/document/d/10FvF61hB1WpBNGG5hoxJwT3GMewa603ZzAblGGdEwIQ/edit?usp=sharing][Google Doc]].
+
+Slack: https://join.slack.com/t/nau-zpe9663/shared_invite/zt-1f03d17v9-YpBVXHA0IeqFzPGIGF385g 
+
+** Textbooks
+
+These provide background/theory about the algorithms we study in this class.
+   
+The readings are from [[https://www.deeplearningbook.org/][Deep Learning]] by Goodfellow, et al., which is
+freely available online.
+
+You should have some knowledge of computational complexity (big O
+notation), so please read the following if you need to review:
+- The [[https://mitpress.mit.edu/sites/default/files/sicp/full-text/book/book-Z-H-4.html#%25_toc_%25_sec_1.2.3][SICP]] book, 1.2.3 "Orders of Growth," has a brief description in
+  general terms (not specific to machine learning).
+- The [[https://arizona-nau.primo.exlibrisgroup.com/discovery/fulldisplay?vid=01NAU_INST:01NAU&search_scope=MyInst_and_CI&tab=Everything&docid=alma991007591689703842&lang=en&context=L&adaptor=Local%2520Search%2520Engine&query=any,contains,algorithms%2520introduction&offset=0&virtualBrowse=true][CLRS]] book has a more detailed description in Chapter 3, "Growth
+  of Functions" (not specific to machine learning).
+
+** Weekly schedule of Homeworks and reading
+
+Homework topics and readings for each week are listed below. The date
+of the Monday of each week is written. Each homework is due Friday of
+that week, 11:59PM.
+
+- Aug 29, [[file:homeworks/01-installation.org][Homework week 1]]: installing software, reading CSV, data
+  visualization.
+  - [[file:installation.org][Installation instructions]], [[file:slides/01-intro-slides/slides.pdf][slides]].
+- Sep 5, [[file:homeworks/02-k-fold-cross-validation.org][Homework week 2]]: k-fold cross-validation, nearest neighbors
+  and linear models.
+  - [[file:slides/02-cross-validation.pdf][Slides]].
+  - Reading [[https://www.deeplearningbook.org/contents/ml.html][DL5]] (The most important parts are 5.2 and 5.3).
+- Sep 12, [[file:homeworks/03-nearest-neighbors.org][Homework week 3]]: nearest neighbors.
+  - [[file:slides/03-nearest-neighbors.pdf][Slides]].
+  - Reading [[https://www.deeplearningbook.org/contents/ml.html][DL5]].
+- Sep 19, [[file:homeworks/04-gradient-descent-logistic-regression.org][Homework week 4]]: linear model with early stopping
+  regularization.
+  - [[file:slides/04-linear-models.pdf][Slides]], [[http://ml.nau.edu/viz/2022-02-02-gradient-descent-regression/][interactive figure showing gradient descent for regression]] ([[https://github.com/tdhock/cs570-spring-2022/blob/master/figure-gradient-descent-regression.R][source]]).
+  - Reading [[https://www.deeplearningbook.org/contents/ml.html][DL5]], [[https://www.deeplearningbook.org/contents/numerical.html][DL4.3]]. 
+- Sep 26, week 5 review and exam.
+  - [[file:exams/exam1_practice.pdf][Exam review]] is Mon Sept 26.
+  - No class Weds Sept 28.
+  - Exam is Fri Sept 30, in class. During the exam you are allowed to
+    use one page of handwritten notes.
+  - [[file:exams/exam1_practice.pdf][Practice exam PDF]].
+- Oct 3, [[file:homeworks/06-torch-mlp.org][Homework week 6]]:
+  training linear model and neural networks using torch.
+  - [[file:slides/torch-part1/06-backprop.pdf][Slides]].
+  - Reading [[https://www.deeplearningbook.org/contents/mlp.html][DL6]].
+- Oct 10, [[file:homeworks/07-auto-diff.org][Homework week 7]]:
+  implementing an automatic differentiation system.
+  - [[file:slides/torch-part1/06-backprop.pdf][Slides]], section Automatic differentiation.
+  - Reading [[https://www.deeplearningbook.org/contents/mlp.html][DL6.5]].
+- Oct 17, [[file:homeworks/08-regression.org][Homework week 8]]: neural networks for regression.
+  - Exam 1 review/solutions Fri Oct 21.
+- Oct 24, week 9 review and exam 2.
+  - No class Mon Oct 24.
+  - Exam 2 preview/solutions for extra credit is Weds Oct 26.
+  - Exam is Fri Oct 28, in class. During the exam you are allowed to
+    use one page of handwritten notes.
+  - [[file:exams/exam2_practice.pdf][Practice exam 2 PDF]].
+- Oct 31, [[file:homeworks/10-multi-class.org][Homework week 10]]: neural networks for multi-class
+  classification.
+  - [[file:slides/torch-part1/06-backprop.pdf][Slides]]. 
+  - Reading [[https://hastie.su.domains/ElemStatLearn/printings/ESLII_print12.pdf][ESL4.4]], [[https://www.deeplearningbook.org/contents/mlp.html][DL6.2]], especially section 6.2.2.3 Softmax Units for
+    Multinoulli Output Distributions.
+- Nov 7, [[file:homeworks/11-regularization.org][Homework week 11]]: regularizing neural networks.
+  - Reading [[https://www.deeplearningbook.org/contents/regularization.html][DL7]].
+- Nov 14, [[file:homeworks/12-optimization.org][Homework week 12]]: optimization.
+  - [[file:slides/12-optimization.pdf][Slides]].
+  - Reading [[https://www.deeplearningbook.org/contents/optimization.html][DL8]].
+- Nov 21, [[file:homeworks/13-convolutional-networks.org][Homework week 13]]: convolutional networks.
+  - [[file:slides/torch-part1/12-convolutional-networks.pdf][Slides]].
+  - Reading [[https://www.deeplearningbook.org/contents/convnets.html][DL9]].
+- Nov 28, [[file:homeworks/14-cluster-gpu.org][Homework week 14]]: learning on a cluster/GPU.
+  - [[file:slides/torch-part1/06-backprop.pdf][My Slides]].
+  - [[https://rcdata.nau.edu/hpcpub/workshops/odintro.pdf][Monsoon slides]].
+- Dec 5, reading week, [[file:exams/exam3_practice.org][exam review]] Weds Dec 7, 9:10-10AM. Extra credit: Karl, Savannah, Nitin, Danny, Miles.
+- Final exam, Weds Dec 14, 8-9:30AM.
+
+** Rubric for homeworks
+
+Your content and responses to each homework question will be graded as
+follows
+- Full credit for figures which show correct results, along with code
+  which is correct and is of high quality.
+- [[https://docs.google.com/document/d/1wLejtG_CU-Gcc5LGBt8woliCd4DyDOfu0ZgCY2HYa0A/edit?usp=sharing][This General Usage Rubric]] will be used to grade the code
+  quality/efficiency in each of your homeworks, -5 for each
+  violation of these good coding rules.
+- Some code and figures/results/answers, but clearly incorrect, -5 to -10.
+- Missing code or figure/results/answers, -10 to -20.
+- Missing code and figure/results/answers, -20 to -40.
+
+** Software 
+
+The links below provide practical advice about how to write the code
+necessary for the homeworks, and please read [[file:installation.org][my instructions to
+install all of the necessary software]].
+
+Python documentation and introductory tutorials:
+- numpy is a python module for multi-dimensional arrays (vectors,
+  matrices, etc). It is useful for storing numeric data sets and doing
+  various computations in learning algorithms (vectorized functions,
+  matrix multiplication, etc). [[https://numpy.org/doc/stable/user/absolute_beginners.html][NumPy: the absolute basics for
+  beginners]], [[https://www.w3schools.com/python/numpy/numpy_intro.asp][W3Schools]], [[https://www.tutorialspoint.com/numpy/numpy_introduction.htm][TutorialsPoint]].
+- pandas is a python module for data reading and manipulation. Whereas
+  every column in a numpy matrix is the same type (typically double),
+  columns in a pandas DataFrame can be different types (string, int,
+  etc). [[https://pandas.pydata.org/pandas-docs/stable/user_guide/10min.html][10 minutes to pandas]], [[https://www.w3schools.com/python/pandas/pandas_intro.asp][W3Schools]], [[https://www.tutorialspoint.com/python_pandas/python_pandas_introduction.htm][TutorialsPoint]].
+- [[https://pyjanitor-devs.github.io/pyjanitor/][janitor]] is a python module for data cleaning and reshaping. It is
+  useful for getting data into the right format for learning or
+  visualization.
+- seaborn.objects is a python module for data visualization based on
+  the grammar of graphics, similar to ggplot2 in R. [[https://aeturrell.github.io/python4DS/data-visualise.html][Data Visualisation
+  chapter of Python for Data Science online book]].
+- plotnine is a python module for data visualization based on the
+  grammar of graphics, similar to ggplot2 in R: [[https://plotnine.readthedocs.io/en/stable/index.html][docs]], [[tutorials]], [[https://tdhock.github.io/blog/2021/data-reshape-viz-update/][My
+  2021 blog post comparing R and python libraries for data reshaping
+  and visualization]].
+- Scikit-learn is a python module which implements various standard
+  machine learning algorithms. [[https://scikit-learn.org/stable/user_guide.html][User guide]]: [[https://scikit-learn.org/stable/modules/neighbors.html][Nearest Neighbors]], [[https://scikit-learn.org/stable/modules/linear_model.html][Linear
+  Models]].
+- torch is a python module which is similar to numpy, but with two key
+  differences which are useful for machine learning: (1) makes it easy
+  to use automatic differentiation, and (2) computations can be easily
+  performed on GPU for increased speed. [[https://pytorch.org/tutorials/beginner/nlp/pytorch_tutorial.html][Introduction to pytorch
+  tutorial]].
+
+** General Questions and Answers (FAQ)
+
+- Are there any materials online from previous versions of this class
+  which may be useful? Here are some video screencasts from Spring
+  2020 (R/keras was used instead of python/numpy/torch).
+  - [[https://www.youtube.com/playlist?list=PLwc48KSH3D1PYdSd_27USy-WFAHJIfQTK][Neural networks using keras in R]].
+  - [[https://www.youtube.com/playlist?list=PLwc48KSH3D1MvTf_JOI00_eIPcoeYMM_o][Number of hidden units is a regularization parameter]].
+  - [[https://www.youtube.com/playlist?list=PLwc48KSH3D1O1iWRXid7CsiXI9gO9lS4V][Convolutional Neural Networks in R]].
+- Can I copy/modify the code demos from in class and from your screencast videos? 
+  Yes you can copy/modify these code demos for your homework, since
+  they are a part of the class material. 
+  But in general, copying without giving 
+  a clear citation of your source is plagiarism
+  (and will be pursued as an academic integrity violation).
+- Can I consult documentation from the libraries that we use in class such as pandas and torch?
+  Yes, this is highly encouraged, please do so.
+- Can I collaborate with my classmates on the homework? 
+  Yes, as long as your share ideas and not code/results. 
+  More specifically, homeworks are individual assignments which should be your own work, 
+  so it is strictly forbidden to copy code/results from classmates or internet sources.
+  However it is encouraged to discuss ideas related to lectures and 
+  homework solutions with classmates.
+  
+** How to ace this class
+
+Before class you should prepare by doing the suggested
+readings/videos. When you do that, write a summary in your own words
+of every section. Also write questions that you have during your
+reading so you can ask in class or office hours.
+
+During class, take notes by writing what you understood in your own
+words. Also I would suggest to ask questions in class as soon as you
+need clarification.
+
+After class, you should review your notes with one of your classmates
+(ask one of the students who seem to be correctly answering a lot of
+questions in class). Ask each other questions and try to
+teach/summarize some of the material with each other -- that is one of
+the best ways to learn.
+
+Finally after doing all of the above, please come to office hours (see
+syllabus), or email me to schedule a meeting.
