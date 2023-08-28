@@ -4,7 +4,7 @@ Topic: Deep Learning.
 
 Dates: Aug 28 - Dec 15.
 
-Meeting time/place: MWF 10:20-11:10 TODO.
+Meeting time/place: MWF 10:20-11:10, ENG 101.
 
 Syllabus: [[https://docs.google.com/document/d/10FvF61hB1WpBNGG5hoxJwT3GMewa603ZzAblGGdEwIQ/edit?usp=sharing][Google Doc]].
 
