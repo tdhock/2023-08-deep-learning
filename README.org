@@ -30,6 +30,7 @@ that week, 11:59PM.
 
 - Aug 28, [[file:homeworks/01-installation.org][Homework week 1]]: installing software, reading CSV.
   - [[file:installation.org][Installation instructions]], [[file:slides/01-intro-slides/slides.pdf][slides]].
+  - [[https://tdhock.github.io/blog/2023/essential-emacs-key-commands/][Essential emacs key commands]].
 - Sep 4, [[file:homeworks/02-data-viz.org][Homework week 2]]: data visualization.
 - Sep 11,  [[file:homeworks/03-k-fold-cross-validation.org][Homework week 3]]: k-fold cross-validation, nearest neighbors
   and linear models.
