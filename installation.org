@@ -95,3 +95,11 @@ https://elpy.readthedocs.io/en/latest/ide.html for more elpy key
 commands (sending code from python code files to the interactive
 shell), and https://realpython.com/emacs-the-best-python-editor/ for a
 nice tutorial about emacs and python.
+
+** FAQ 
+
+On windows python not found error, fix by
+
+#+begin_src elisp
+  (setq python-shell-interpreter "python");not "python3" !
+#+end_src
