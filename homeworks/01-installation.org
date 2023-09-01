@@ -33,8 +33,8 @@ Your goal is to write a python script that performs the following steps:
    code in the top window, and the python console (with output) on the
    bottom.
    
-For your homework please upload in bblearn a single PDF file, with (1)
-your python code, (2) the corresponding results/output (after running
-your python code), and (3) your commentary/interpretation/answers to
-questions.
+For your homework please upload in canvas a single PDF file, with (1)
+your python code, (2) the corresponding results/output/screenshot
+(after running your python code), and (3) your
+commentary/interpretation/answers to questions.
 
