@@ -98,8 +98,13 @@ nice tutorial about emacs and python.
 
 ** FAQ 
 
-On windows python not found error, fix by
+On windows python not found error, or emacs can't find the python in
+your conda env, please fix by
 
 #+begin_src elisp
   (setq python-shell-interpreter "python");not "python3" !
 #+end_src
+
+Also if you have a space in your username, and you get an error about
+version "is" when you try conda-env-activate, then please try this fix:
+https://github.com/necaris/conda.el/pull/150
