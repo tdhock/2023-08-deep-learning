@@ -42,6 +42,17 @@ that week, 11:59PM.
 - Sep 18,  [[file:homeworks/04-nearest-neighbors.org][Homework week 4]]: nearest neighbors.
   - [[file:slides/03-nearest-neighbors.pdf][Slides]].
   - Reading [[https://www.deeplearningbook.org/contents/ml.html][DL5]].
+  - To prepare for doing deep learning on the super-computer cluster
+    (week 14), you need to do the Monsoon training by next week.
+    Please note that every student is required* to complete our
+    [[https://in.nau.edu/arc/obtaining-an-account/][self-paced training]] within two weeks of their Monsoon access being
+    enabled. Students who have not completed the training within 2
+    weeks will automatically be disabled. *The training is not
+    required of students who already completed the training in another
+    class (or through research work) AND who have maintained NAU
+    affiliation since first completing the training.  To view the list
+    of users belonging to the cs599-fall23 Slurm account, you can use
+    the "sshare -aA cs599-fall23" command.
 - Sep 25,  [[file:homeworks/05-linear-model-early-stopping.org][Homework week 5]]: linear model with early stopping
   regularization.
   - [[file:slides/04-linear-models.pdf][Slides]], [[http://ml.nau.edu/viz/2022-02-02-gradient-descent-regression/][interactive figure showing gradient descent for regression]] ([[https://github.com/tdhock/cs570-spring-2022/blob/master/figure-gradient-descent-regression.R][source]]).
