@@ -1,45 +1,21 @@
-Homework week 1
+Homework week 2
 
-The goal of this coding project is to get you up and running with
-python, including
-- downloading data files.
-- reading CSV data into python as a DataFrame.
-- printing a summary of the number of rows/columns in a DataFrame.
-- basic data visualization using plotnine.
+The goal of this coding project is to get you familar with basic data
+visualization in python, using plotnine.
 
 ** Part 1: visualizing image data
 
 Your goal is to write a python script that performs the following steps:
 
-1. use urllib.request.urlretrieve to programmatically download a copy
-   of the zip.test data set from
-   https://github.com/tdhock/cs570-spring-2022/raw/master/data/zip.test.gz
-   (original was from
-   https://web.stanford.edu/~hastie/ElemStatLearn/datasets/zip.test.gz
-   but is now broken).  Use an if statement so that the download only
-   happens if the file does not yet exist on your system. Make sure
-   the saved file has the gz suffix, which indicates that the file has
-   been compressed using gzip. This data file represents images of
-   handwritten digits, one example per line/row. Each example is one
-   of the ten possible digits (as indicated by the label in the first
-   column). Use pandas.read_csv to read the compressed CSV data file
-   into python as a DataFrame (you may need to use sep/header
-   arguments to parse the CSV correctly). Print the shape attribute --
-   how many rows/columns are there?
-2. Convert the DataFrame to a numpy.array, which is a more useful data
-   structure for machine learning algorithms. Make sure to exclude the
-   label column (that is the first column). Print the shape attribute
-   to show the number of rows and columns. What is the number of
-   rows/observations/example digits? What is the number of
-   columns/features/pixels per example?
-3. First convert one row of your input data matrix into a DataFrame
+1. Do the same read CSV steps as in homework 1.
+2. First convert one row of your input data matrix into a DataFrame
    with columns row,col,intensity where row,col go from 0 to 15, and
    intensity are the input values (-1 to 1). Use
-   numpy.repeat/resize/arange to create row/col without any for
+   numpy.repeat/tile/arange to create row/col without any for
    loops. Then plug that DataFrame into plotnine with geom_tile/raster
    to visualize one row from that data set as an image of a digit. Use
    ggtitle to show the label of the chosen example.
-4. Make a facetted/multi-panel plot of several images. First use a for
+3. Make a facetted/multi-panel plot of several images. First use a for
    loop over several rows of the data, say the first nine rows. In
    each iteration of the for loop you should construct a DataFrame
    with columns observation,label,intensity,row,col. Then at the end
@@ -51,18 +27,18 @@ Your goal is to write a python script that performs the following steps:
    label (digit class from 0 to 9), use
    facet_wrap(["observation","label"],labeller="label_both").
 
-For your homework please upload in bblearn a single PDF file, with (1)
+For your homework please upload a single PDF file, with (1)
 your python code, (2) the corresponding results/output (after running
 your python code), and (3) your commentary/interpretation/answers to
 questions.
 
-** Part 2: advanced data visualization (extra credit for CS499 undergrads, required for CS599 graduate students)
+** Part 2: advanced data visualization (extra credit)
 
 These are exercises taken from
 https://rcdata.nau.edu/genomic-ml/animint2-manual/Ch02-ggplot2.html
 which are in R, and the goal is to translate the code into
 python/plotnine (the variable name viz.aligned below refers to ggplot
-code on that web page). Please download the [[file:WorldBank.csv]] data
+code on that web page). Please download the [[file:../data/WorldBank.csv]] data
 set.
 
 1. In viz.aligned we showed a ggplot with a scatterplot panel on the

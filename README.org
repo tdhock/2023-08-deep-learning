@@ -35,6 +35,9 @@ that week, 11:59PM.
 - Sep 11,  [[file:homeworks/03-k-fold-cross-validation.org][Homework week 3]]: k-fold cross-validation, nearest neighbors
   and linear models.
   - [[file:slides/02-cross-validation.pdf][Slides]].
+  - is the only way to improve the model by adding more data? (draw
+    test error vs train size)
+  - advantages and disadvantages of k-fold cv?
   - Reading [[https://www.deeplearningbook.org/contents/ml.html][DL5]] (The most important parts are 5.2 and 5.3).
 - Sep 18,  [[file:homeworks/04-nearest-neighbors.org][Homework week 4]]: nearest neighbors.
   - [[file:slides/03-nearest-neighbors.pdf][Slides]].
@@ -144,6 +147,22 @@ Python documentation and introductory tutorials:
   so it is strictly forbidden to copy code/results from classmates or internet sources.
   However it is encouraged to discuss ideas related to lectures and 
   homework solutions with classmates.
+- On windows in emacs, first plotnine/matplotlib plot works fine, then
+  it hangs, how to fix? try =matplotlib.use("agg")= as in code below.
+
+#+begin_src python
+on_windows = os.name == "nt"
+in_render = r.in_render if 'r' in dir() else False
+using_agg = on_windows and not in_render
+if using_agg:
+    import matplotlib
+    matplotlib.use("agg")
+def show(g):
+    if not using_agg:
+        return g
+    g.save("tmp.png")
+    webbrowser.open('tmp.png')
+#+end_src
   
 ** How to ace this class
 
