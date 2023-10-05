@@ -83,6 +83,7 @@ that week, 11:59PM.
   - [[file:slides/torch-part1/12-convolutional-networks.pdf][Slides]].
   - Reading [[https://www.deeplearningbook.org/contents/convnets.html][DL9]].
 - Nov 27, [[file:homeworks/14-cluster-gpu.org][Homework week 14]]: learning on a cluster/GPU.
+  - [[https://tdhock.github.io/blog/2022/cross-validation-cluster/][My tutorial about using python on Monsoon, for machine learning]].
   - [[file:slides/torch-part1/06-backprop.pdf][My Slides]].
   - [[https://rcdata.nau.edu/hpcpub/workshops/odintro.pdf][Monsoon slides]].
 - Dec 4, reading week, [[file:exams/exam3_practice.org][exam review]] TODO DATE.
