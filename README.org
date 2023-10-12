@@ -26,7 +26,21 @@ notation), so please read the following if you need to review:
 
 Homework topics and readings for each week are listed below. The date
 of the Monday of each week is written. Each homework is due Friday of
-that week, 11:59PM.
+that week, 11:59PM. Each homework will require analyzing machine
+learning algorithms, in order to prove that they are
+learning/accurate. To show that your algorithm is correctly selecting
+hyper-parameters (typically the number of iterations/epochs of
+gradient descent), you will need to make a plot like below,
+
+[[file:homeworks/figure-example-subtrain-validation-loss.png]]
+
+Also you will need to show that your learning algorithm is able to
+provide accurate predictions on new/test data, is comparable to other
+learning algorithms, and better than the featureless baseline.  To
+show that, you will need to use K-fold cross-validation, on each data
+set (spam and zip), to create a plot like below,
+
+TODO
 
 - Aug 28, [[file:homeworks/01-installation.org][Homework week 1]]: installing software, reading CSV.
   - [[file:installation.org][Installation instructions]], [[file:slides/01-intro-slides/slides.pdf][slides]].
