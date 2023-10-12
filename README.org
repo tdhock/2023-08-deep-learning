@@ -40,7 +40,7 @@ learning algorithms, and better than the featureless baseline.  To
 show that, you will need to use K-fold cross-validation, on each data
 set (spam and zip), to create a plot like below,
 
-TODO
+[[file:homeworks/figure-example-test-accuracy.png]]
 
 - Aug 28, [[file:homeworks/01-installation.org][Homework week 1]]: installing software, reading CSV.
   - [[file:installation.org][Installation instructions]], [[file:slides/01-intro-slides/slides.pdf][slides]].
