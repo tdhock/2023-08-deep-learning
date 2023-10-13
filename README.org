@@ -68,6 +68,7 @@ that week, 11:59PM.
 - Oct 16, week 8: review and exam.
   - [[file:exams/exam1_practice.pdf][Exam 1 practice PDF]].
   - [[file:exams/exam2_practice.pdf][Practice exam 2 PDF]].
+  - Mid-term review Weds 18 Oct, exam Fri 20 Oct in class.
 - Oct 23, [[file:homeworks/09-regression.org][Homework week 9]]: neural networks for regression.
 - Oct 30, [[file:homeworks/10-multi-class.org][Homework week 10]]: neural networks for multi-class
   classification.
