@@ -80,9 +80,11 @@ set (spam and zip), to create a plot like below,
   - [[file:slides/torch-part1/06-backprop.pdf][Slides]], section Automatic differentiation.
   - Reading [[https://www.deeplearningbook.org/contents/mlp.html][DL6.5]].
 - Oct 16, week 8: review and exam.
+  - no class Mon Oct 16.
   - [[file:exams/exam1_practice.pdf][Exam 1 practice PDF]].
   - [[file:exams/exam2_practice.pdf][Exam 2 practice PDF]].
-  - Mid-term review Weds 18 Oct, exam Fri 20 Oct in class.
+  - Mid-term review Weds 18 Oct.
+  - exam Fri 20 Oct in class.
 - Oct 23, [[file:homeworks/09-regression.org][Homework week 9]]: neural networks for regression.
 - Oct 30, [[file:homeworks/10-multi-class.org][Homework week 10]]: neural networks for multi-class
   classification.
