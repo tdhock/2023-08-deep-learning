@@ -565,9 +565,9 @@ backpropagation (0-3).
   \item Method backward() computes gradient and recursively calls
     backward() on input nodes.
   \item \texttt{Operation} is virtual so we only instantiate sub-classes:
-    \texttt{mm(features, weights)},
-    \texttt{relu(a\_mat)},
-    \texttt{logistic\_loss(a\_mat, label\_vec)}.
+    \texttt{mm(X\_node, W\_node)},
+    \texttt{relu(A\_node)},
+    \texttt{logistic\_loss(A\_node, y\_node)}.
   \item Sub-classes should define \texttt{forward} and
     \texttt{gradient} methods which implement details of
     forward/back-prop, results are stored as \texttt{value}/\texttt{grad}
