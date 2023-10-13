@@ -26,7 +26,21 @@ notation), so please read the following if you need to review:
 
 Homework topics and readings for each week are listed below. The date
 of the Monday of each week is written. Each homework is due Friday of
-that week, 11:59PM.
+that week, 11:59PM. Each homework will require analyzing machine
+learning algorithms, in order to prove that they are
+learning/accurate. To show that your algorithm is correctly selecting
+hyper-parameters (typically the number of iterations/epochs of
+gradient descent), you will need to make a plot like below,
+
+[[file:homeworks/figure-example-subtrain-validation-loss.png]]
+
+Also you will need to show that your learning algorithm is able to
+provide accurate predictions on new/test data, is comparable to other
+learning algorithms, and better than the featureless baseline.  To
+show that, you will need to use K-fold cross-validation, on each data
+set (spam and zip), to create a plot like below,
+
+[[file:homeworks/figure-example-test-accuracy.png]]
 
 - Aug 28, [[file:homeworks/01-installation.org][Homework week 1]]: installing software, reading CSV.
   - [[file:installation.org][Installation instructions]], [[file:slides/01-intro-slides/slides.pdf][slides]].
@@ -67,7 +81,7 @@ that week, 11:59PM.
   - Reading [[https://www.deeplearningbook.org/contents/mlp.html][DL6.5]].
 - Oct 16, week 8: review and exam.
   - [[file:exams/exam1_practice.pdf][Exam 1 practice PDF]].
-  - [[file:exams/exam2_practice.pdf][Practice exam 2 PDF]].
+  - [[file:exams/exam2_practice.pdf][Exam 2 practice PDF]].
   - Mid-term review Weds 18 Oct, exam Fri 20 Oct in class.
 - Oct 23, [[file:homeworks/09-regression.org][Homework week 9]]: neural networks for regression.
 - Oct 30, [[file:homeworks/10-multi-class.org][Homework week 10]]: neural networks for multi-class
@@ -84,6 +98,7 @@ that week, 11:59PM.
   - [[file:slides/torch-part1/12-convolutional-networks.pdf][Slides]].
   - Reading [[https://www.deeplearningbook.org/contents/convnets.html][DL9]].
 - Nov 27, [[file:homeworks/14-cluster-gpu.org][Homework week 14]]: learning on a cluster/GPU.
+  - [[https://tdhock.github.io/blog/2022/cross-validation-cluster/][My tutorial about using python on Monsoon, for machine learning]].
   - [[file:slides/torch-part1/06-backprop.pdf][My Slides]].
   - [[https://rcdata.nau.edu/hpcpub/workshops/odintro.pdf][Monsoon slides]].
 - Dec 4, reading week, [[file:exams/exam3_practice.org][exam review]] TODO DATE.
