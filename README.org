@@ -86,6 +86,19 @@ set (spam and zip), to create a plot like below,
   - Mid-term review Weds 18 Oct.
   - exam Fri 20 Oct in class.
 - Oct 23, [[file:homeworks/09-regression.org][Homework week 9]]: neural networks for regression.
+  - [[file:slides/torch-part1/06-backprop.pdf][Slides]].
+  - thinking about study habits
+  - 1. What grade do I want in this class? Am I on track to earning
+    that grade?
+  - 2. at least one example of a good study habit that I have been
+    practicing during the first half of the semester, which is helping
+    me earn the grade I want, and which I would like to continue.
+  - 3. at least one example of a change in study habits that I could
+    do in the second half of the semester, in order to earn the grade
+    I want. starting homework earlier, asking questions in class,
+    asking questions with classmates, asking questions during office
+    hours, organizing group study sessions, writing notes based on
+    readings from the textbooks, ...
 - Oct 30, [[file:homeworks/10-multi-class.org][Homework week 10]]: neural networks for multi-class
   classification.
   - [[file:slides/torch-part1/06-backprop.pdf][Slides]]. 
@@ -93,6 +106,7 @@ set (spam and zip), to create a plot like below,
     Multinoulli Output Distributions.
 - Nov 6, [[file:homeworks/11-regularization.org][Homework week 11]]: regularizing neural networks.
   - Reading [[https://www.deeplearningbook.org/contents/regularization.html][DL7]].
+  - Veterans Day Holiday, no class Fri Nov 10.
 - Nov 13, [[file:homeworks/12-optimization.org][Homework week 12]]: optimization.
   - [[file:slides/12-optimization.pdf][Slides]].
   - Reading [[https://www.deeplearningbook.org/contents/optimization.html][DL8]].
