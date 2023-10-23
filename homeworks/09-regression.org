@@ -4,10 +4,10 @@ Like last week, the goal is to implement a stochastic gradient descent
 algorithm for a neural network. So far in class we have focused on
 binary classification, which is when the label is either 1 or 0
 (positive or negative, spam or not, etc), by using the logistic loss
-(sometimes class binary cross-entropy loss). This week we will
+(sometimes called binary cross-entropy loss). This week we will
 implement learning algorithms for regression.
 
-The only difference from your week 6 neural network code is:
+The only difference from your week 6 torch homework code is:
 - use the square loss, [[https://pytorch.org/docs/stable/generated/torch.nn.MSELoss.html#torch.nn.MSELoss][torch.nn.MSELoss]], instead of the logistic loss
   (BCEWithLogitsLoss).
 - use regression data sets (output is a real number) instead of
@@ -97,7 +97,7 @@ of epochs.
 Use similar experimental setup as previous homeworks (with 3-fold CV
 train/test splits defined by KFold), with these differences:
 - use [[https://archive.ics.uci.edu/ml/datasets/Forest+Fires][Forest Fires]] and [[https://archive.ics.uci.edu/ml/datasets/Airfoil+Self-Noise][Airfoil Self-Noise]] data sets from the UCI ML
-  Repository, [[file:~/teaching/cs499-599-fall-2022/data/][local copies in data folder]]. In both data sets, the
+  Repository, [[file:../data/][local copies in data folder]] In both data sets, the
   label/output to predict is in the last column.
 - compute and plot test square loss, instead of test accuracy.
 - for the featureless baseline, for every test observation, you should
