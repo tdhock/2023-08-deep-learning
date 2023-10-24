@@ -88,6 +88,7 @@ import plotnine as p9
 p9.options.figure_size=(4.5,2.5)
 import numpy as np
 import pandas as pd
+from skimage import measure
 import os
 # grid/contouring functions
 def make_grid(mat, n_grid = 80):
@@ -101,7 +102,6 @@ def make_grid(mat, n_grid = 80):
 # https://scikit-image.org/docs/dev/api/skimage.measure.html#skimage.measure.find_contours
 # https://scikit-image.org/docs/dev/auto_examples/edges/plot_contours.html#sphx-glr-auto-examples-edges-plot-contours-py
 def contour_paths(three_cols, level):
-    from skimage import measure
     uniq_df = three_cols.iloc[:,:2].apply(pd.unique)
     n_grid = uniq_df.shape[0]
     fun_mat = three_cols.iloc[:,2].to_numpy().reshape(
@@ -297,7 +297,7 @@ show(gg)
 
 ---
 
-# Also plot decision boundary in black
+# Also plot decision boundary in grey
 
 ```{python}
 contour_df = contour_paths(
@@ -310,6 +310,7 @@ gg_contour = gg+\
             y="weight_lb",
             group="contour_i",
         ),
+        color="grey",
         data=contour_df)
 show(gg_contour)
 ```
