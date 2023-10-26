@@ -96,7 +96,7 @@ of epochs.
 
 Use similar experimental setup as previous homeworks (with 3-fold CV
 train/test splits defined by KFold), with these differences:
-- use [[https://archive.ics.uci.edu/ml/datasets/Forest+Fires][Forest Fires]] and [[https://archive.ics.uci.edu/ml/datasets/Airfoil+Self-Noise][Airfoil Self-Noise]] data sets from the UCI ML
+- use [[https://archive.ics.uci.edu/dataset/162/forest+fires][Forest Fires]] and [[https://archive.ics.uci.edu/dataset/291/airfoil+self+noise][Airfoil Self-Noise]] data sets from the UCI ML
   Repository, [[file:../data/][local copies in data folder]] In both data sets, the
   label/output to predict is in the last column.
 - compute and plot test square loss, instead of test accuracy.

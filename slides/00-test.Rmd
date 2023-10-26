@@ -13,7 +13,8 @@ knitr::opts_chunk$set(
   echo=FALSE, results=FALSE,
   dpi=400)
 Sys.setenv(RETICULATE_PYTHON=if(.Platform$OS.type=="unix")
-  "/home/tdhock/.local/share/r-miniconda/envs/cs570s22/bin/python"
+  "/home/tdhock/miniconda3/envs/2023-08-artificial-intelligence/bin/python"
+  ##"/home/tdhock/.local/share/r-miniconda/envs/cs570s22/bin/python"
   else "~/Miniconda3/envs/cs570s22/python.exe")
 ```
 
