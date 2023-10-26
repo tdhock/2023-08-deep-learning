@@ -46,13 +46,8 @@ if(FALSE){
 # air foil self-noise
 
 ```{python results=TRUE}
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.model_selection import KFold
 import plotnine as p9
-# default in inches.
 p9.options.figure_size=(4.5,2.5)
-# for override in individual plots.
-# p9.theme(figure_size=(4.5,2.5))
 import numpy as np
 np.set_printoptions(linewidth=55)
 import pandas as pd
@@ -108,8 +103,6 @@ def show(g):
         return g
     g.save("tmp.png")
     webbrowser.open('tmp.png')
-
-data_dict = {}
 
 spam_df = pd.read_csv(
     "~/teaching/cs570-spring-2022/data/spam.data",
