@@ -163,5 +163,5 @@ animint2dir(viz, "09-regression-viz", open.browser = FALSE)
 if(FALSE){
   servr::httd("09-regression-viz")
   remotes::install_github("animint/animint2@84-move-gallery-from-blocks-to-gh-pages")
-  animint2pages(viz, "animint/figure-nnet-regression-degrees")
+  animint2pages(viz, "tdhock/figure-nnet-regression-degrees")
 }

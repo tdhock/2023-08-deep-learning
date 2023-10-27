@@ -243,6 +243,21 @@ show_data_trans("forest_fires","log,norm01",exclude_zero=True)
 
 ---
 
+# Enforcing non-negative predictions
+
+Assume a label $y> 0$. How to make sure that we get a positive
+prediction from our neural network?
+
+Neural network predicts $f(x)$, a real number (maybe negative).
+
+Log-normal loss: for a given label $y$, loss is $(\log[\exp
+f(x)]-\log[y])^2$, which is defined for any positive predictions $\exp
+f(x)>0$.
+
+How to handle $y=0$? Binary classification then regression.
+
+---
+
 # Real data feature distribution
 
 ```{python}
@@ -360,6 +375,17 @@ show(gg_scatter)
 
 ---
 
+# Nearest neighbors, baseline/code
+
+* In binary classification, we predict the most frequent class among
+  the K nearest neighbors (K=N is the featureless baseline).
+* In regression we predict mean label of K nearest neighbors (instead
+  of most frequent label / mode).
+* That is the only difference between KNeighborsRegressor and
+  KNeighborsClassifier in sklearn.neighbors.
+
+---
+
 # Train nearest neighbor regression 
 
 ```{python}
@@ -444,8 +470,6 @@ gg_valid=p9.ggplot()+\
     p9.facet_grid(". ~ feature_name", labeller="label_both")
 show(gg_valid)
 ```
-
-Predict mean of K nearest neighbors.
 
 ---
 
@@ -586,21 +610,6 @@ show(gg_deriv("square"))
 
 ---
 
-# Enforcing non-negative predictions
-
-Assume a label $y> 0$. How to make sure that we get a positive
-prediction from our neural network?
-
-Neural network predicts $f(x)$, a real number (maybe negative).
-
-Log-normal loss: for a given label $y$, loss is $(\log[\exp
-f(x)]-\log[y])^2$, which is defined for any positive predictions $\exp
-f(x)>0$.
-
-How to handle $y=0$? Binary classification then regression.
-
----
-
 # Interactive visualization of gradient descent for regression
 
 http://ml.nau.edu/viz/2022-02-02-gradient-descent-regression/
@@ -611,6 +620,13 @@ http://ml.nau.edu/viz/2022-02-02-gradient-descent-regression/
   decrease).
 - Step size too small: learning is very slow (requires a lot of
   iterations to minimize loss).
+
+---
+
+# TODO slides
+
+* Comparison with ReLU act in last layer to force non-negative
+  predictions (including zeros).
 
 ---
 
