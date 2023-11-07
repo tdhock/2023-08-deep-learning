@@ -107,6 +107,7 @@ set (spam and zip), to create a plot like below,
 - Nov 6, [[file:homeworks/11-regularization.org][Homework week 11]]: regularizing neural networks.
   - Reading [[https://www.deeplearningbook.org/contents/regularization.html][DL7]].
   - Veterans Day Holiday, no class Fri Nov 10.
+  - only office hours this week are Tues 3-4.
 - Nov 13, [[file:homeworks/12-optimization.org][Homework week 12]]: optimization.
   - [[file:slides/12-optimization.pdf][Slides]].
   - Reading [[https://www.deeplearningbook.org/contents/optimization.html][DL8]].

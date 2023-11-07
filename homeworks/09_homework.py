@@ -83,8 +83,8 @@ class CSV(torch.utils.data.Dataset):
         return len(self.labels)
 class TorchLearner:
     def __init__(
-            self, units_per_layer, step_size=0.1, 
-            batch_size=20, max_epochs=100):
+            self, units_per_layer, step_size=0.01, 
+            batch_size=20, max_epochs=400):
         self.max_epochs = max_epochs
         self.batch_size=batch_size
         self.model = TorchModel(units_per_layer)
@@ -117,13 +117,12 @@ class TorchLearner:
         self.train_df = pd.concat(train_df_list)
     def predict(self, test_features):
         return self.model(test_features)
-learner  = TorchLearner([feature_ncol, 100, 10, 1])
 class TorchLearnerCV:
     def __init__(self, n_folds = 3, units_per_layer=[data_ncol,1]):
         self.units_per_layer = units_per_layer
         self.n_folds = n_folds
-    def fit(self, train_features, train_labels):
-        train_nrow, train_ncol = train_features.shape
+    def fit(self, input_tensor, output_tensor):
+        train_nrow, train_ncol = input_tensor.shape
         times_to_repeat=int(math.ceil(train_nrow/self.n_folds))
         fold_id_vec = np.tile(torch.arange(self.n_folds), times_to_repeat)[:train_nrow]
         np.random.shuffle(fold_id_vec)
@@ -141,6 +140,7 @@ class TorchLearnerCV:
                     "y":set_y}
             learner = TorchLearner(self.units_per_layer)
             learner.fit(split_data_dict)
+            learner.train_df["fold"] = validation_fold
             cv_data_list.append(learner.train_df)
         self.cv_data = pd.concat(cv_data_list)
         self.train_df = self.cv_data.groupby(["set_name","epoch"]).mean().reset_index()
@@ -148,10 +148,35 @@ class TorchLearnerCV:
         best_epochs = valid_df["loss"].argmin()
         self.min_df = valid_df.query("epoch==%s"%best_epochs)
         self.final_learner = TorchLearner(self.units_per_layer, max_epochs=best_epochs)
-        self.final_learner.fit({"subtrain":{"X":train_features,"y":train_labels}})
+        self.final_learner.fit({"subtrain":{"X":input_tensor,"y":output_tensor}})
     def predict(self, test_features):
         return self.final_learner.predict(test_features)
-model = TorchModel([feature_ncol, 100, 10, 1])
+learner = TorchLearnerCV(units_per_layer=[feature_ncol,100,1])
+learner.fit(input_tensor, output_tensor)
+
+gg_folds=p9.ggplot()+\
+    p9.theme(text=p9.element_text(size=30))+\
+    p9.geom_line(
+        p9.aes(
+            x="epoch", 
+            y="loss",
+            color="set_name"
+        ),
+        data=learner.cv_data)+\
+    p9.facet_grid(". ~ fold", labeller="label_both")
+gg_folds.save("09_homework_folds.png", height=5, width=20)
+
+gg_loss=p9.ggplot()+\
+    p9.theme(text=p9.element_text(size=30))+\
+    p9.geom_line(
+        p9.aes(
+            x="epoch", 
+            y="loss",
+            color="set_name"
+        ),
+        data=learner.train_df)
+gg_loss.save("09_homework_loss.png", height=5, width=10)
+
 pred_vec = model(input_tensor)
 loss_fun = torch.nn.MSELoss()
 loss_value = loss_fun(pred_vec, output_tensor)
