@@ -112,6 +112,7 @@ set (spam and zip), to create a plot like below,
   - [[file:slides/12-optimization.pdf][Slides]].
   - Reading [[https://www.deeplearningbook.org/contents/optimization.html][DL8]].
 - Nov 20, [[file:homeworks/13-convolutional-networks.org][Homework week 13]]: convolutional networks.
+  - Mon and Fri class cancelled.
   - [[file:slides/torch-part1/12-convolutional-networks.pdf][Slides]].
   - Reading [[https://www.deeplearningbook.org/contents/convnets.html][DL9]].
 - Nov 27, [[file:homeworks/14-cluster-gpu.org][Homework week 14]]: learning on a cluster/GPU.
