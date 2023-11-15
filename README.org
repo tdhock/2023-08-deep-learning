@@ -120,7 +120,7 @@ set (spam and zip), to create a plot like below,
   - [[file:slides/torch-part1/06-backprop.pdf][My Slides]].
   - [[https://rcdata.nau.edu/hpcpub/workshops/odintro.pdf][Monsoon slides]].
 - Dec 4, reading week, [[file:exams/exam3_practice.org][exam review]] TODO DATE.
-- Finals week, exam TODO DATE.
+- Finals week, exam 10-noon Mon Dec 11.
 
 ** Rubric for homeworks
 

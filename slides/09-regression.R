@@ -158,10 +158,11 @@ viz <- animint(
     geom_point(aes(
       sin, cos, fill=label),
       size=point.size,
-      data=sim.dt))
-animint2dir(viz, "09-regression-viz", open.browser = FALSE)
+      data=sim.dt),
+  source="https://github.com/tdhock/2023-08-deep-learning/blob/main/slides/09-regression.R")
+animint2dir(viz, "09-regression-viz")
 if(FALSE){
   servr::httd("09-regression-viz")
   remotes::install_github("animint/animint2@84-move-gallery-from-blocks-to-gh-pages")
-  animint2pages(viz, "tdhock/figure-nnet-regression-degrees")
+  animint2pages(viz, "animint-figure-nnet-regression-degrees")
 }
