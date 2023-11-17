@@ -7,7 +7,7 @@ descent as the optimization algorithm. In this project the goal is to
 explore other algorithms for optmizing neural networks. For this
 project you need to use torch.
 Your experiment should result in a plot of subtrain/validation loss
-(on the y axis) as a function of a number of hidden layers (on the x
+(on the y axis) as a function of a number of epochs (on the x
 axis), for various optimization algorithms.
 
 ** Class: OptimizerMLP
