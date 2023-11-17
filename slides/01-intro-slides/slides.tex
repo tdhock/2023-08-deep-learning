@@ -86,6 +86,10 @@
 % \section{Introduction to machine learning}
 
 \begin{frame}
+  \includegraphics[width=\textwidth]{figure-ai-vs-ml}
+\end{frame}
+
+\begin{frame}
   \frametitle{Machine learning intro: image classification example}
   ML is all about learning predictive functions $f(x)\approx y$, where 
   \begin{itemize}
@@ -161,26 +165,31 @@
 
 \end{frame}
 
-\begin{frame}
-  \frametitle{Learning two different functions}
-  Say \textsc{Learn} is a learning algorithm you have coded.
-  \begin{center}
-      \begin{tabular}{c}
-        \textsc{Learn}(\includegraphics[height=1in]{mnist-digits}) $\rightarrow f$, 
-        \textsc{Learn}(\includegraphics[height=1in]{fashion-mnist-sprite-some}) $\rightarrow g$
-  \end{tabular}
-  \end{center}
-  \begin{itemize}
-  \item Then we would expect
-    $f(\includegraphics[height=1cm]{mnist-0})=0$,
-    $f(\includegraphics[height=1cm]{mnist-1})=1$
-  \item $g(\includegraphics[height=1cm]{fashion-mnist-boot})=\text{shoe/0}$,
-  $g(\includegraphics[height=1cm]{fashion-mnist-pants})=\text{pants/1}$
-  \item Q: what happens if you do 
-    $f(\includegraphics[height=1cm]{fashion-mnist-boot})$, or
-   $g(\includegraphics[height=1cm]{mnist-0})$?
 
-  \end{itemize}
+\begin{frame}
+  \frametitle{Learning two different functions using two data sets} Figure from chapter by Hocking TD,
+  \textit{Introduction to machine learning and neural networks} for
+  book \textit{Land Carbon Cycle Modeling: Matrix Approach, Data
+    Assimilation, and Ecological Forecasting} edited by Luo Y (Taylor
+  and Francis, 2022).
+  \begin{center}
+  \includegraphics[width=\textwidth]{figure-learn-digits-clothing}
+  %     \begin{tabular}{c}
+  %       \textsc{Learn}(\includegraphics[height=1in]{mnist-digits}) $\rightarrow g$, 
+  %       \textsc{Learn}(\includegraphics[height=1in]{fashion-mnist-sprite-some}) $\rightarrow h$
+  % \end{tabular}
+\end{center}
+%\begin{itemize}
+  % \item Then we would expect
+  %   $g(\includegraphics[height=1cm]{mnist-0})=0$,
+  %   $g(\includegraphics[height=1cm]{mnist-1})=1$
+  % \item $h(\includegraphics[height=1cm]{fashion-mnist-boot})=\text{shoe/9}$,
+  % $h(\includegraphics[height=1cm]{fashion-mnist-pants})=\text{pants/1}$
+  %\end{itemize}
+  \textbf{Learn} is a learning algorithm you have coded, which outputs
+    $g$ and $h$. Q: what happens if you do
+    $g(\includegraphics[height=1cm]{fashion-mnist-boot})$, or
+    $h(\includegraphics[height=1cm]{mnist-0})$?
 \end{frame}
 
 \begin{frame}
