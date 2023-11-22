@@ -349,7 +349,7 @@ torch.nn.Conv1d(in_channels=1,
     window.
   \item Pooling typically used over spatial dimension (independently
     for each channel/filter). 
-  \end{itemize}
+  \end{itemize} 
 \end{frame}
 
 \begin{frame}[fragile]
@@ -371,11 +371,40 @@ torch.nn.MaxPool1d(kernel_size=2, stride=2)
 
 \begin{frame}[fragile]
   \frametitle{Stride diagram}
-  \includegraphics[width=\textwidth]{figure-pooling-10-3}
+  \includegraphics[width=\textwidth]{figure-pooling-9-3}
 \begin{verbatim}
 torch.nn.MaxPool1d(kernel_size=3, stride=1)
 torch.nn.MaxPool1d(kernel_size=3, stride=2)
 torch.nn.MaxPool1d(kernel_size=3, stride=3)
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Stride diagram}
+  \includegraphics[width=\textwidth]{figure-pooling-16-4}
+\begin{verbatim}
+torch.nn.MaxPool1d(kernel_size=4, stride=1)
+torch.nn.MaxPool1d(kernel_size=4, stride=2)
+torch.nn.MaxPool1d(kernel_size=4, stride=3)
+torch.nn.MaxPool1d(kernel_size=4, stride=4)
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{2D convolutional kernel for 6x6 pixel image, kernel size=2}
+  \includegraphics[width=\textwidth]{figure-conv2d-6x6-kernel=2}
+\begin{verbatim}
+torch.nn.MaxPool2d(kernel_size=2, stride=2)
+torch.nn.Conv2d(kernel_size=2, stride=2)
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{2D convolutional kernel for 6x6 pixel image, kernel size=3}
+  \includegraphics[width=\textwidth]{figure-conv2d-6x6-kernel=3}
+\begin{verbatim}
+torch.nn.MaxPool2d(kernel_size=3, stride=3)
+torch.nn.Conv2d(kernel_size=3, stride=3)
 \end{verbatim}
 \end{frame}
 

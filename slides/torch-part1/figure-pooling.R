@@ -4,8 +4,8 @@ d <- function(input.units, kernel.weights){
   data.table(input.units, kernel.weights)
 }
 figs.dt <- rbind(
-  d(20, 4),
-  d(10, 3))
+  d(9, 3),
+  d(16, 4))
 for(figs.i in 1:nrow(figs.dt)){
   figs.row <- figs.dt[figs.i]
   kernel.width <- figs.row$kernel.weights-1
@@ -35,8 +35,9 @@ for(figs.i in 1:nrow(figs.dt)){
   full.conv.dt <- full.grid.dt[is.finite(d)]
   edge.dt.list <- list()
   for(stride in 1:figs.row$kernel.weights){
+    out.numbers <- seq(1, units.per.layer[["output"]], by=stride)
     edge.dt.list[[paste(stride)]] <- data.table(
-      stride, full.conv.dt[output %% stride == 0])
+      stride, full.conv.dt[output %in% out.numbers])
   }
   edge.dt <- do.call(rbind, edge.dt.list)
   node.dt[, node.label := paste0(ifelse(
@@ -50,9 +51,12 @@ for(figs.i in 1:nrow(figs.dt)){
       function(stride)data.table(node.dt[layer.i==1], stride)))
   show.nodes <- rbind(in.nodes, out.nodes)
   gg <- ggplot()+
-    ggtitle(paste(
-      "Number of units:",
-      paste(units.per.layer, collapse=",")))+
+    ggtitle(sprintf(
+      "1D convolution/pooling with %d inputs and kernel size=%d",
+      units.per.layer[["input"]],
+      figs.row[["kernel.weights"]]
+    ))+
+    theme(text=element_text(size=20))+
     geom_segment(aes(
       1, input.y,
       xend=2, yend=output.y),
@@ -60,7 +64,7 @@ for(figs.i in 1:nrow(figs.dt)){
     geom_point(aes(
       layer.i, y),
       shape=21,
-      size=8,
+      size=10,
       fill="white",
       data=show.nodes)+
     geom_text(aes(
@@ -74,7 +78,7 @@ for(figs.i in 1:nrow(figs.dt)){
     figs.row[, sprintf(
       "figure-pooling-%s-%s.png", input.units, kernel.weights
     )],
-    width=10, height=6, units="in", res=200)
+    width=12, height=6, units="in", res=200)
   print(gg)
   dev.off()
 }
