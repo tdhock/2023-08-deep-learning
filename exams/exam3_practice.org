@@ -1,0 +1,53 @@
+1. Cross-validation is an algorithm used throughout machine learning
+   in order to quantify the accuracy/error of learned models on unseen
+   data.
+  - a) In class we discussed two different kinds of cross-validation
+    splits: train/test splits and subtrain/validation splits. What is
+    the purpose of each kind of split?
+  - b) For a train/test split, give pseudocode for the K-fold
+    cross-validation algorithm, making sure to include inputs/outputs
+    of the algorithm, the random assignment step, and the computation
+    of test accuracy/error.
+
+2. Model parameters and hyper-parameters.
+  - a) In a linear model with early stopping regularization, consider
+    two parameters: the weight vector and the number of iterations of
+    gradient descent. Which is a hyper-parameter, and which is the
+    regular model parameter? Why?
+  - b) In a deep neural network consider four parameters: the
+    layer-specific activation functions, the layer-specific weight
+    matrices, the number of hidden units per layer, and the number of
+    layers. Which are hyper-parameters, and which are regular model
+    parameters? Why?
+
+3. Number of parameters to learn. Assume a deep neural network with 5
+   layers, including the input and output layers. Assume architecture
+   of (input=100, 1000, 100, 10, output=1) units in each layer. Assume
+   that the prediction function for each layer is f^l(h) = W^l h,
+   where h is the previous layer units and W^l is a weight matrix.
+  - a) How many real-valued weight parameters are there in W^1?
+  - b) How many real-valued weight parameters are there in W^2?
+  - c) How many real-valued weight parameters are there in W^3?
+  - d) How many real-valued weight parameters are there in W^4?
+  - e) How many real-valued weight parameters are there to learn
+    overall in the neural network?
+
+4. Regularization for neural networks. Many hyper-parameters of deep
+   neural networks that we saw in class can be interpreted as
+   regularization parameters. 
+  - a) Give three examples of hyper-parameters which can be interpreted
+    as regularization parameters of deep neural networks. For each
+    parameter, do LARGE or SMALL parameter values result in overfitting?
+  - b) Explain how you could demonstrate that a hyper-parameter has a
+    regularizing effect. Explain the computations you would perform and
+    the data visualization/plot that you would create.
+
+5. Convolutional neural networks. 
+  - a) The convolution operation can be interpreted as a SPARSE or DENSE
+    matrix multiplication?
+  - b) Assume layer A in a neural network is fully connected, and
+    layer B is convolutional. If both layers have the same number of
+    hidden units, which has more parameters to learn? Why?
+
+6. Compute forward/backward pass of back-propagation algorithm by hand
+   (see computation exercises on slides).

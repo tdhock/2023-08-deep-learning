@@ -119,8 +119,11 @@ set (spam and zip), to create a plot like below,
   - [[https://tdhock.github.io/blog/2022/cross-validation-cluster/][My tutorial about using python on Monsoon, for machine learning]].
   - [[file:slides/torch-part1/06-backprop.pdf][My Slides]].
   - [[https://rcdata.nau.edu/hpcpub/workshops/odintro.pdf][Monsoon slides]].
-- Dec 4, reading week, [[file:exams/exam3_practice.org][exam review]] TODO DATE.
+- Dec 4, reading week, [[file:exams/exam3_practice.org][exam review]] Weds Dec 7.
 - Finals week, exam 10-noon Mon Dec 11.
+  - It will be open-note: during the real exam, you are allowed one sheet of paper, filled in with your own notes, in your own handwriting.
+
+
 
 ** Rubric for homeworks
 
