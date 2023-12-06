@@ -51,3 +51,5 @@
 
 6. Compute forward/backward pass of back-propagation algorithm by hand
    (see computation exercises on slides).
+
+Dayra, Parth, Nischit, Tung, Ben.
