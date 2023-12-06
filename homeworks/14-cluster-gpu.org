@@ -23,6 +23,8 @@ ssh -Y abc123@monsoon.hpc.nau.edu
   cluster, and see the windows on your PC screen. See
   https://tdhock.github.io/blog/2019/cygwin-x-forwarding/ for
   more detailed instructions on windows.
+- For Mac, install [[https://www.xquartz.org/][XQuartz]], open xquartz/x11 terminal, and use ssh -Y
+  from there.
 
 After connecting your prompt should indicate that you are on the login
 node, wind.
@@ -89,6 +91,10 @@ with the following contents:
       torch.cuda.is_available(),
       socket.gethostname()))
 #+end_src
+
+In the above code, we tell torch to use one thread (otherwise monsoon
+may kill our job for using more CPUs than we asked for in our srun
+command, because torch default uses more than one CPU).
 
 srun is used to run a command on another cluster node.
 
