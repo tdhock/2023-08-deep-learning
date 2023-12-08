@@ -632,4 +632,7 @@ http://ml.nau.edu/viz/2022-02-02-gradient-descent-regression/
 
 # Possible exam questions
 
-- TODO
+- Say $x=[5,-3,10]$, $w=[2,3,1]$, $y=6$, and we are doing regression
+  (square loss). Compute loss $L$, gradient $\nabla_w L$, and new
+  weights after one step of gradient descent with learning rate / step
+  size = 0.1.
